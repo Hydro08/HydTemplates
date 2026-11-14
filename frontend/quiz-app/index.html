@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!--
+  index.html  -  Sign in / sign up page of the quiz app
+  Styles:  quiz.css (logo) and auth.css (this page)
+  Scripts: db.js (data), toast.js (pop-up messages), logo.js (typing title), auth.js (what the buttons do)
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | Quiz App</title>
+
+  <!-- Font for the logo (Fredoka) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Shared styles first, then the quiz app styles -->
+  <link rel="stylesheet" href="../../shared/css/reset.css">
+  <link rel="stylesheet" href="../../shared/css/variable.css">
+  <link rel="stylesheet" href="../../shared/css/components.css">
+  <link rel="stylesheet" href="quiz.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth-page">
+  <main class="auth-wrapper">
+
+    <!-- The typing 3D title. logo.js fills it in. -->
+    <div class="logo" role="img" aria-label="Quiz">
+      <span class="logo-text" data-logo aria-hidden="true">Quiz</span>
+    </div>
+
+    <div class="book-wrapper">
+      <div class="book">
+
+        <!-- LEFT PAGE: sign in -->
+        <section class="book-page" id="signin-page" aria-label="Sign in">
+          <form id="signin-form" novalidate>
+            <h1>Sign in</h1>
+
+            <label for="signin-username">Username</label>
+            <input id="signin-username" autocomplete="username" placeholder="e.g. student">
+
+            <label for="signin-password">Password</label>
+            <div class="password-field">
+              <input id="signin-password" type="password" autocomplete="current-password" placeholder="••••••••">
+              <button type="button" class="show-password-button" data-toggle-password="signin-password"
+                      aria-label="Show password" aria-pressed="false">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+                <line class="eye-slash" x1="4" y1="4" x2="20" y2="20"/>
+              </svg>
+              </button>
+            </div>
+
+            <!-- Phones only: switches to the sign up page -->
+            <button type="button" class="switch-form-link" data-switch-to="signup">Create an account</button>
+            <button class="btn full-width" type="submit">Sign in</button>
+          </form>
+          <p class="muted">Admin: admin / admin123. Teacher: teacher / teacher123. Student: student / student123. New students: create an account, then type a class code (the teacher must approve you). Demo class code: ABC123. Demo teacher code: TEACHER1</p>
+        </section>
+
+        <!-- RIGHT PAGE: student or teacher sign up (starts blurred / "inactive") -->
+        <section class="book-page inactive" id="signup-page" aria-label="Create an account" tabindex="0" role="button">
+          <form id="signup-form" novalidate inert>
+            <h1>Create an account</h1>
+
+            <!-- Student or teacher. A teacher also needs the teacher code (the admin gives it). -->
+            <fieldset class="role-picker">
+              <legend>I am a</legend>
+              <label class="role-option">
+                <input type="radio" name="signup-role" value="student" checked><span>Student</span>
+              </label>
+              <label class="role-option">
+                <input type="radio" name="signup-role" value="teacher"><span>Teacher</span>
+              </label>
+            </fieldset>
+
+            <div id="teacher-code-field" hidden>
+              <label for="signup-teacher-code">Teacher code</label>
+              <input id="signup-teacher-code" autocomplete="off" placeholder="Ask the admin for this code">
+            </div>
+
+            <!-- Students only: the section decides which subjects they see (e.g. BSIT 2-1) -->
+            <div id="student-section-field">
+              <label for="signup-section">Section</label>
+              <input id="signup-section" autocomplete="off" placeholder="e.g. BSIT 2-1">
+            </div>
+
+            <label for="signup-fullname">Full name</label>
+            <input id="signup-fullname" autocomplete="name" placeholder="e.g. Juan Dela Cruz">
+
+            <label for="signup-username">Username</label>
+            <input id="signup-username" autocomplete="username" placeholder="e.g. juandelacruz">
+
+            <label for="signup-password">Password (at least 6 characters)</label>
+            <div class="password-field">
+              <input id="signup-password" type="password" autocomplete="new-password" placeholder="••••••••">
+              <button type="button" class="show-password-button" data-toggle-password="signup-password"
+                      aria-label="Show password" aria-pressed="false">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+                <line class="eye-slash" x1="4" y1="4" x2="20" y2="20"/>
+              </svg>
+              </button>
+            </div>
+
+            <label for="signup-confirm-password">Confirm password</label>
+            <div class="password-field">
+              <input id="signup-confirm-password" type="password" autocomplete="new-password" placeholder="••••••••">
+              <button type="button" class="show-password-button" data-toggle-password="signup-confirm-password"
+                      aria-label="Show password" aria-pressed="false">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+                <line class="eye-slash" x1="4" y1="4" x2="20" y2="20"/>
+              </svg>
+              </button>
+            </div>
+
+            <!-- Phones only: switches back to the sign in page -->
+            <button type="button" class="switch-form-link" data-switch-to="signin">I already have an account</button>
+            <button class="btn full-width" type="submit">Create account</button>
+          </form>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Order matters: db.js first, because the other scripts use it -->
+  <script src="db.js"></script>
+  <script src="toast.js"></script>
+  <script src="site.config.js"></script>
+  <script src="logo.js"></script>
+  <script src="auth.js"></script>
+  <script src="../../shared/js/back-to-templates.js"></script>
+</body>
+</html>

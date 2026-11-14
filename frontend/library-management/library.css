@@ -1,0 +1,254 @@
+:root{--bg:#f5f6fa;--card:#fff;--ink:#1d2433;--muted:#6b7385;--accent:#2f5bea;--bad:#d64545;--ok:#1f9d63;--warn:#d98a12;--line:#e3e6ee}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--card:#1b2030;--ink:#e8ebf3;--muted:#98a0b3;--line:#2a3144}}
+*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+[hidden]{display:none!important}
+.muted{color:var(--muted)}.error{min-height:1.2em;margin:0}
+input,select{padding:.65rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+.btn{padding:.65rem 1rem;border:0;border-radius:8px;background:var(--accent);color:#fff;font:600 .9rem system-ui;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---------- glass authentication ---------- */
+body.auth-page.in-auth{
+  background:linear-gradient(rgb(8 20 32/.40),rgb(8 20 32/.40)),url("assets/library-bg.jpg") center/cover no-repeat fixed,linear-gradient(135deg,#3b2a1a,#1e3a5f)}
+.auth{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:1rem;color:#fff}
+.glass{width:min(400px,100%);display:grid;gap:.8rem;padding:2rem;border-radius:18px;
+  background:rgb(10 25 40/.38);border:1px solid rgb(255 255 255/.35);box-shadow:0 12px 40px rgb(0 0 0/.35);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:rgb(20 30 42/.9)}}
+.glass h1{margin:0;font-size:2rem}.glass p{margin:0}
+.glass input{background:rgb(255 255 255/.14);border-color:rgb(255 255 255/.35);color:#fff}
+.glass input::placeholder{color:rgb(255 255 255/.7)}
+.glass a{color:#fff}.glass .error{color:#ffb4b4}.glass .switch{text-align:center}
+
+/* ---------- app: header + burger menu ---------- */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:.75rem;padding:.6rem 1rem;background:var(--card);border-bottom:1px solid var(--line)}
+.top .muted{margin-left:auto}
+.burger{display:grid;gap:4px;place-content:center;width:40px;height:40px;padding:0;background:none;border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.burger span{display:block;width:18px;height:2px;border-radius:2px;background:var(--ink)}
+.backdrop{position:fixed;inset:0;z-index:60;background:rgb(0 0 0/.45)}
+.side{position:fixed;top:0;bottom:0;left:0;z-index:61;display:flex;flex-direction:column;gap:.25rem;width:min(290px,85vw);padding:1rem;background:var(--card);
+  border-right:1px solid var(--line);box-shadow:8px 0 30px rgb(0 0 0/.25);transform:translateX(-100%);visibility:hidden;transition:transform .25s,visibility .25s}
+.side.open{transform:none;visibility:visible}
+.side-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.x{width:36px;height:36px;font-size:1.5rem;background:none;border:0;color:var(--muted);cursor:pointer}
+.side nav{display:grid;gap:.2rem}
+.side nav a{display:flex;align-items:center;gap:.4rem;padding:.7rem .8rem;border-radius:8px;color:var(--ink);text-decoration:none}
+.side nav a:hover,.side nav a.active{background:var(--line)}
+.count{margin-left:auto;min-width:1.3rem;text-align:center;font-size:.75rem;padding:.1rem .4rem;border-radius:99px;background:var(--bad);color:#fff}
+.side-foot{margin-top:auto;padding-top:1rem;border-top:1px solid var(--line)}.side-foot .btn{width:100%}
+html.menu-open,html.menu-open body{overflow:hidden}
+@media (prefers-reduced-motion:reduce){.side{transition:none}}
+
+/* ---------- pages ---------- */
+.page{padding:1rem;max-width:1000px;margin:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem}.stat b{display:block;font-size:1.8rem}
+.bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}.bar input{flex:1;min-width:140px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.book{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem;display:grid;gap:.45rem}.book h3{margin:0}
+.badge{font-size:.75rem;padding:.15rem .5rem;border-radius:99px;background:var(--line)}
+.badge.ok{background:var(--ok);color:#fff}.badge.bad{background:var(--bad);color:#fff}.badge.warn{background:var(--warn);color:#fff}
+.wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden}
+th,td{padding:.6rem .75rem;text-align:left;border-bottom:1px solid var(--line)}
+.note{display:flex;gap:.75rem;padding:.8rem 1rem;margin-bottom:.6rem;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px}
+.note.bad{border-left-color:var(--bad)}.note.warn{border-left-color:var(--warn)}.note.ok{border-left-color:var(--ok)}
+
+/* The shared "Back to templates" pill is for the sign-in page only: hide it once signed in (it covered the Sign out button). */
+body:not(.in-auth) > a[style*="position:fixed"]{display:none!important}
+
+/* field labels */
+label{display:grid;gap:.3rem;font-weight:600;font-size:.9rem;text-align:left}
+label input{font-weight:400;font-size:1rem}
+.bar label{flex:1;min-width:130px}.bar label:nth-of-type(4){flex:0 0 90px;min-width:90px}
+.bar{align-items:end}
+.bar label input{width:100%;min-width:0}
+td .btn{padding:.4rem .7rem}
+
+/* red counter on the burger button */
+.burger{position:relative}
+.dot{position:absolute;top:-7px;right:-7px;min-width:19px;height:19px;padding:0 5px;display:grid;place-items:center;font:700 .7rem system-ui;border-radius:99px;background:var(--bad);color:#fff}
+
+/* toast: top center on desktop and tablet, bottom right on phones */
+.toasts{position:fixed;z-index:200;top:1rem;left:50%;transform:translateX(-50%);display:grid;gap:.5rem;width:min(440px,calc(100vw - 2rem));pointer-events:none}
+.toast{padding:.75rem 1rem;border-radius:10px;background:#1d2433;color:#fff;font-weight:600;border-left:4px solid var(--accent);box-shadow:0 8px 24px rgb(0 0 0/.3);animation:tin .25s ease-out}
+.toast.ok{border-left-color:var(--ok)}.toast.bad{border-left-color:var(--bad)}
+.toast.out{opacity:0;transition:opacity .3s}
+@keyframes tin{from{opacity:0;transform:translateY(-10px)}}
+@media (max-width:600px){
+  .toasts{top:auto;left:auto;bottom:1rem;right:1rem;transform:none;width:min(340px,calc(100vw - 2rem))}
+  @keyframes tin{from{opacity:0;transform:translateY(10px)}}
+}
+@media (prefers-reduced-motion:reduce){.toast{animation:none}}
+
+/* ---------- color circle + palette box (theme.js) ---------- */
+.theme-wrap{position:relative;flex:none;display:flex;align-items:center;padding-left:.75rem;border-left:1px solid var(--line)}
+.top .muted{margin-left:auto}
+.theme-circle{width:30px;height:30px;padding:0;border-radius:50%;cursor:pointer;background:var(--circle-bg,var(--bg));border:4px solid var(--circle-ink,var(--ink));box-shadow:0 0 0 1px var(--line)}
+.theme-circle:hover,.theme-circle:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.theme-box{position:absolute;top:calc(100% + 14px);right:0;z-index:40;width:290px;max-width:calc(100vw - 2rem);display:grid;gap:.75rem;padding:1rem;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgb(0 0 0/.2)}
+.theme-title{margin:0;font-weight:700}
+.theme-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem .5rem}
+.theme-preset-item{display:flex;align-items:center;gap:.5rem;min-width:0;padding:.2rem .3rem;background:none;border:0;border-radius:8px;color:inherit;font:inherit;font-size:.8rem;text-align:left;cursor:pointer}
+.theme-preset-item:hover,.theme-preset-item:focus-visible{background:var(--line)}
+.theme-preset{flex:none;width:24px;height:24px;border-radius:50%;border:3px solid}
+.theme-preset-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.theme-row{display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin:0;font-weight:400}
+.theme-row input[type=color]{width:52px;height:32px;padding:0;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer}
+.theme-warning{margin:0;font-size:.85rem;color:var(--bad)}
+.theme-box .theme-reset{justify-self:start}
+.btn{color:var(--accent-ink,#fff)}.btn.ghost{color:var(--ink)}
+.top .muted{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- Books: clickable cards + the popup backdrop (shared with My Loans) ---------- */
+.book{cursor:pointer;transition:transform .15s,box-shadow .15s}
+.book:hover,.book:focus-visible{transform:translateY(-3px);box-shadow:0 8px 20px rgb(0 0 0/.15);outline:none}
+.cover-wrap{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:1rem;background:rgb(0 0 0/.6)}
+.cover-wrap{overscroll-behavior:contain}
+@media (prefers-reduced-motion:reduce){.book{transition:none}}
+html.modal-open,html.modal-open body{overflow:hidden}
+.bar label.wide{flex:1 1 100%}.bar label.wide .muted{font-weight:400}
+
+/* ---------- loan details modal (My Loans) ---------- */
+/* the page is book-shaped (2:3), so the cover that flies in from the shelf fits it exactly */
+.loan-modal{position:relative;perspective:1500px;transform-origin:0 0;width:min(340px,88vw,calc((100dvh - 2rem)/1.5));aspect-ratio:2/3;display:flex;flex-direction:column;justify-content:center;padding:1.4rem;background:var(--card);color:var(--ink);border-radius:4px 16px 16px 4px;box-shadow:0 20px 50px rgb(0 0 0/.4)}
+.loan-x{position:absolute;top:.4rem;right:.4rem;width:36px;height:36px;font-size:1.5rem;line-height:1;color:var(--muted);background:none;border:0;border-radius:50%;cursor:pointer}
+.loan-x:hover{background:var(--line)}
+.loan-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.loan-cell{display:grid;gap:.3rem;align-content:start;min-width:0;padding:1rem .9rem;border:1px solid var(--line);border-radius:10px}
+.loan-cell small{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.loan-cell b{overflow-wrap:anywhere;font-size:1.2rem;line-height:1.3}.loan-cell .badge{justify-self:start;font-size:.9rem;padding:.25rem .75rem}
+.loan-foot .btn{font-size:1.05rem;padding:.8rem 1.5rem}
+.loan-foot{display:flex;justify-content:center;margin-top:1.25rem}.loan-foot:empty{display:none}
+
+/* Phones: inputs under 16px make iOS zoom in on focus and stay zoomed after signing in, which can push the burger button out of reach. */
+input,select{font-size:16px}
+.burger,.theme-circle,.btn{touch-action:manipulation}
+
+/* ---------- My Loans: each loan is a little book ---------- */
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1.25rem}
+.mybook{aspect-ratio:2/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;padding:1.2rem .9rem 1.2rem 1.5rem;text-align:center;color:#fff;cursor:pointer;
+  border-radius:4px 10px 10px 4px;background:linear-gradient(145deg,var(--c1,#2f5bea),var(--c2,#1e3a5f));box-shadow:0 6px 16px rgb(0 0 0/.25),inset 7px 0 0 rgb(0 0 0/.25);transition:transform .15s,box-shadow .15s}
+.mybook:hover,.mybook:focus-visible{transform:translateY(-4px) rotate(-1deg);box-shadow:0 12px 24px rgb(0 0 0/.3),inset 7px 0 0 rgb(0 0 0/.25);outline:none}
+.mybook h3{margin:0;font:700 1.2rem/1.25 Georgia,"Times New Roman",serif;text-shadow:0 2px 6px rgb(0 0 0/.4);overflow-wrap:anywhere}
+.mybook p{margin:0;font:italic .9rem Georgia,serif;opacity:.9}
+.mybook::before{content:"";width:34px;height:3px;border-radius:3px;background:rgb(255 255 255/.7)}
+@media (prefers-reduced-motion:reduce){.mybook{transition:none}}
+
+/* ---------- the cover swings open like a book when a loan is clicked ---------- */
+#loanWrap{animation:lfade .25s ease-out}
+.lc{position:absolute;inset:0;z-index:3;pointer-events:none;transform-origin:left center;transform-style:preserve-3d;border-radius:4px 16px 16px 4px;
+  animation:lcopen 1.1s .75s cubic-bezier(.55,0,.25,1) forwards}
+.lc-front,.lc-back{position:absolute;inset:0;border-radius:inherit;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:linear-gradient(145deg,var(--c1,#2f5bea),var(--c2,#1e3a5f));box-shadow:inset 9px 0 0 rgb(0 0 0/.25),0 6px 18px rgb(0 0 0/.35)}
+.lc-front{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;padding:2.4rem 1.8rem 2.4rem 3rem;text-align:center;color:#fff}
+.lc-front h3{margin:0;font:700 2.3rem/1.25 Georgia,"Times New Roman",serif;text-shadow:0 2px 8px rgb(0 0 0/.4);overflow-wrap:anywhere}
+.lc-front p{margin:0;font:italic 1.7rem Georgia,serif;opacity:.92}
+.lc-line{width:68px;height:3px;border-radius:3px;background:rgb(255 255 255/.7)}
+.lc-back{transform:rotateY(180deg);filter:brightness(.8);border-radius:16px 4px 4px 16px;box-shadow:inset -9px 0 0 rgb(0 0 0/.25),0 6px 18px rgb(0 0 0/.35)}
+.loan-grid,.loan-foot{animation:lfade .5s 1.25s backwards}
+@keyframes lcopen{to{transform:rotateY(-168deg)}}
+@keyframes lfade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.lc{display:none}#loanWrap,.loan-grid,.loan-foot{animation:none}}
+
+.mybook.away{visibility:hidden}   /* the shelf copy hides while its twin flies to the center */
+
+/* ---------- locked books: no copies left (customize in LIBRARY_LOCK at the top of library.js) ---------- */
+.book{position:relative}
+.book.locked{min-height:210px;overflow:hidden;border:2px solid var(--bad)}   /* red border = no copies left */
+.lockwrap{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgb(75 85 99/.96);color:#fff;border-radius:inherit;pointer-events:none}
+.biglock{font-size:3.8rem;line-height:1;filter:drop-shadow(0 3px 6px rgb(0 0 0/.35))}
+.locktext{position:absolute;left:.75rem;right:.75rem;bottom:1rem;text-align:center;font-weight:700;font-size:1rem;color:#fff}
+
+/* ---------- Books popup: just the front page of the book (title, author, description), it zooms in from its card ---------- */
+.loan-x{z-index:2}
+.cover-card{background:linear-gradient(145deg,var(--c1,#2f5bea),var(--c2,#1e3a5f));color:#fff;padding:1.4rem 1.4rem 1.4rem 2.2rem;box-shadow:inset 9px 0 0 rgb(0 0 0/.25),0 20px 50px rgb(0 0 0/.4)}
+.cover-card .loan-x{color:#fff;background:rgb(0 0 0/.3)}
+.cc{display:flex;flex-direction:column;align-items:center;gap:1.1rem;text-align:center}
+.cc h3{margin:0;font:700 2rem/1.25 Georgia,"Times New Roman",serif;text-shadow:0 2px 8px rgb(0 0 0/.4);overflow-wrap:anywhere}
+.cc p{margin:0;font:italic 1.4rem Georgia,serif;opacity:.92}
+.cc .cc-desc{max-width:27ch;font:1rem/1.55 system-ui,sans-serif;opacity:.92;margin-top:.3rem}
+#bookModal .lockwrap{background:rgb(75 85 99/.74);justify-content:flex-end;padding-bottom:4.2rem}   /* lock sits lower so the title stays readable */
+#bookModal .biglock{margin-bottom:.4rem}
+
+/* ---------- Books: each book is a colored cover (same color as its popup and as My Loans) ---------- */
+#books.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1.25rem}
+.book{aspect-ratio:2/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;padding:1.2rem .9rem 1.2rem 1.5rem;text-align:center;color:#fff;border:0;
+  border-radius:4px 10px 10px 4px;background:linear-gradient(145deg,var(--c1,#2f5bea),var(--c2,#1e3a5f));box-shadow:0 6px 16px rgb(0 0 0/.25),inset 7px 0 0 rgb(0 0 0/.25)}
+.book:hover,.book:focus-visible{transform:translateY(-4px) rotate(-1deg);box-shadow:0 12px 24px rgb(0 0 0/.3),inset 7px 0 0 rgb(0 0 0/.25)}
+.book::before{content:"";width:34px;height:3px;border-radius:3px;background:rgb(255 255 255/.7)}
+.book h3{margin:0;font:700 1.1rem/1.25 Georgia,"Times New Roman",serif;text-shadow:0 2px 6px rgb(0 0 0/.4);overflow-wrap:anywhere}
+.book .muted{color:#fff;font:italic .9rem Georgia,serif;opacity:.9}
+.book .badge{background:rgb(255 255 255/.22);color:#fff}
+.book .badge.ok{background:var(--ok)}.book .badge.bad{background:var(--bad)}
+.book .btn{background:rgb(255 255 255/.94);color:#1d2433;padding:.5rem .7rem;font-size:.82rem}
+.book.locked{min-height:0;border:0;box-shadow:0 0 0 2px var(--bad),0 6px 16px rgb(0 0 0/.25)}   /* red ring = no copies left (a ring, not a border, so it never gets cut) */
+.book.locked:hover,.book.locked:focus-visible{box-shadow:0 0 0 2px var(--bad),0 12px 24px rgb(0 0 0/.3)}
+.book.away{visibility:hidden}   /* the shelf copy hides while its twin flies to the center */
+
+.book .tags{display:flex;flex-wrap:wrap;justify-content:center;gap:.3rem}
+.book .badge{white-space:nowrap}
+.book .edit-btn{position:absolute;top:.45rem;right:.45rem;z-index:2;padding:.25rem .6rem;font-size:.75rem}
+
+/* ---------- the "+" book (librarian adds a book) ---------- */
+.book.add-book{background:transparent;color:var(--muted);box-shadow:none;border:2px dashed var(--line);font-size:4rem;font-weight:300;line-height:1;cursor:pointer}
+.book.add-book::before{display:none}
+.book.add-book:hover,.book.add-book:focus-visible{color:var(--accent);border-color:var(--accent);box-shadow:none;transform:translateY(-4px)}
+.book.add-book span{font-size:.9rem;font-weight:600}
+.grid .none{grid-column:1/-1;margin:0}
+
+/* ---------- add / edit book modal ---------- */
+textarea{padding:.65rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:16px;resize:vertical;width:100%}
+label textarea{font-weight:400}
+.edit-modal{position:relative;display:grid;gap:.8rem;width:min(440px,100%);max-height:calc(100dvh - 2rem);overflow:auto;padding:1.4rem;background:var(--card);color:var(--ink);border-radius:16px;box-shadow:0 20px 50px rgb(0 0 0/.4)}
+.edit-modal h3{margin:0;padding-right:2.2rem}
+.edit-modal label input{width:100%;min-width:0}
+.edit-two{display:grid;grid-template-columns:1fr 110px;gap:.8rem}
+.edit-head{display:flex;flex-direction:column;align-items:center;gap:.25rem;padding:1.1rem .9rem 1.1rem 1.4rem;text-align:center;color:#fff;border-radius:4px 12px 12px 4px;
+  background:linear-gradient(145deg,var(--c1,#2f5bea),var(--c2,#1e3a5f));box-shadow:inset 7px 0 0 rgb(0 0 0/.25)}
+.edit-head strong{font:700 1.25rem/1.25 Georgia,"Times New Roman",serif;text-shadow:0 2px 6px rgb(0 0 0/.4);overflow-wrap:anywhere}
+.edit-head em{font:italic .95rem Georgia,serif;opacity:.92;overflow-wrap:anywhere}
+.color-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;font-weight:600;font-size:.9rem}
+.color-row small{font-weight:400}
+.color-tools{display:flex;align-items:center;gap:.5rem}
+.color-tools input[type=color]{width:56px;height:36px;padding:0;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer}
+.color-tools .btn{padding:.45rem .8rem}
+.edit-foot{display:flex;justify-content:flex-end;gap:.5rem}
+.edit-modal .error{color:var(--bad);font-size:.9rem}
+
+/* a list with more than 10 rows (Borrow requests) scrolls inside itself; the header row stays put */
+.wrap.scroll{max-height:calc(3.5rem * 11);overflow-y:auto;border-radius:12px;scrollbar-gutter:stable}
+.wrap.scroll table{overflow:visible}
+.wrap.scroll th,.wrap.scroll td{height:3.5rem}
+.wrap.scroll th{position:sticky;top:0;z-index:1;background:var(--card);box-shadow:0 1px 0 var(--line)}
+
+/* Manage on a desktop: Borrow requests | Return requests | Currently borrowed side by side (stacked on tablets and phones) */
+@media (min-width:1340px){
+  .page:has(#v-admin:not([hidden])){max-width:1500px}
+  #v-admin:not([hidden]){display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;align-items:start}
+  #v-admin .col{min-width:0}
+  #v-admin h3{margin:0 0 .6rem}
+  #v-admin th,#v-admin td{padding:.5rem .4rem;font-size:.85rem}
+  #v-admin td:last-child{white-space:nowrap}
+  #v-admin td .btn{padding:.35rem .6rem;font-size:.8rem}
+}
+.loan-foot{flex-direction:column;align-items:center;gap:.75rem}
+.loan-foot .note{margin:0;text-align:left;font-size:.9rem}
+
+/* ---------- the book's QR code (same code as the one on the shelf) ---------- */
+.bc-qr{display:flex;flex-direction:column;align-items:center;gap:.4rem;margin-top:.2rem}
+.qr-box{width:112px;height:112px;line-height:0;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 12px rgb(0 0 0/.3)}   /* always white: a QR needs a light background, also in dark mode */
+.qr-box svg{width:100%;height:100%;display:block}
+.bc-qr small{font-size:.78rem;opacity:.9}
+.bc-qr .btn{padding:.35rem .8rem;font-size:.8rem;background:rgb(255 255 255/.94);color:#1d2433}
+.note.ok{border-left-color:var(--ok)}
+#deepHint{margin:0 0 .8rem}
+#printLabel{display:none}
+@media print{
+  body>*:not(#printLabel){display:none!important}
+  html,body{background:#fff!important}
+  #printLabel{display:flex!important;flex-direction:column;align-items:center;gap:.6rem;width:9cm;margin:1cm auto;padding:.8cm;border:2px solid #000;border-radius:.4cm;text-align:center;color:#000;font-family:Georgia,"Times New Roman",serif;break-inside:avoid}
+  #printLabel h2{margin:0;font-size:20pt;line-height:1.2}
+  #printLabel p{margin:0;font-style:italic;font-size:13pt}
+  #printLabel #plQr{width:6.4cm;height:6.4cm;line-height:0}
+  #printLabel #plQr svg{width:100%;height:100%}
+  #printLabel .pl-note{font:11pt system-ui,sans-serif;font-style:normal}
+}

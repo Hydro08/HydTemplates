@@ -1,0 +1,214 @@
+body.auth {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  color: #fff;
+  /* layers: dark overlay, school photo, gradient fallback when there is no photo yet */
+  background:
+    linear-gradient(rgb(8 20 32 / .42), rgb(8 20 32 / .42)),
+    url("assets/school-bg.jpg") center / cover no-repeat,
+    linear-gradient(135deg, #0f3d3a, #1e3a5f);
+}
+
+/* Glass card with two panels */
+.glass {
+  width: min(1240px, 100%);
+  min-height: 700px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  border-radius: 18px;
+  /* Dark tint + a little blur: the text stays readable and the photo is still visible.
+     Increase blur() for a blurrier background behind the card. */
+  background: rgb(10 25 40 / .38);
+  border: 1px solid rgb(255 255 255 / .35);
+  box-shadow: 0 12px 40px rgb(0 0 0 / .35);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: rgb(20 30 42 / .88); }
+}
+
+.panel { padding: 3.5rem 3.5rem; }
+.form-panel { display: grid; align-content: center; }
+
+.form-panel,
+.info-panel {
+  transition: transform .55s cubic-bezier(.7, 0, .2, 1);
+}
+
+.info-panel {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: .9rem;
+  background: rgb(255 255 255 / .06);
+  border-left: 1px solid rgb(255 255 255 / .3);
+}
+.info-panel p { max-width: 34ch; }
+.info-panel h2 { font-size: 2rem; line-height: 1.2; }
+
+/* Sign up mode: the two panels swap places */
+.glass.is-signup .form-panel { transform: translateX(100%); }
+.glass.is-signup .info-panel {
+  transform: translateX(-100%);
+  border-left: 0;
+  border-right: 1px solid rgb(255 255 255 / .3);
+}
+
+.school { font-weight: 600; margin-bottom: 1rem; opacity: .9; }
+.form-panel h1 { font-size: 2rem; line-height: 1.2; margin-bottom: 1rem; }
+
+/* The two forms overlap in one cell, so the card is always as tall as the longer form
+   (same height for sign in and sign up). */
+.form-panel form {
+  grid-row: 2;
+  grid-column: 1;
+  align-self: center;
+  display: grid;
+  gap: .4rem;
+  transition: opacity .3s ease;
+}
+.form-panel form[inert] { opacity: 0; visibility: hidden; }
+label { font-weight: 600; margin-top: .6rem; }
+
+/* Sign up: fields side by side (two per row) */
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+.cell { display: grid; gap: .4rem; align-content: start; min-width: 0; }
+.row.single { grid-template-columns: 1fr; }
+.opt { font-weight: 400; opacity: .75; font-size: .85em; }
+
+#registerForm { gap: .5rem; }
+#registerForm input { padding-block: .9rem; }
+
+.glass input {
+  width: 100%;
+  color: #fff;
+  background: rgb(255 255 255 / .16);
+  border: 1px solid rgb(255 255 255 / .4);
+}
+.glass input {
+  padding: .8rem 1rem;
+  transition: border-color .3s, background-color .3s, box-shadow .3s;
+}
+.glass input::placeholder { color: rgb(255 255 255 / .72); }
+.glass input:focus-visible { outline-color: #fff; }
+
+/* The text field itself turns red when it is empty or wrong */
+.glass input[aria-invalid="true"] {
+  border-color: #ff6b6b;
+  background: rgb(255 70 70 / .2);
+  box-shadow: 0 0 0 1px #ff6b6b;
+}
+.glass input[aria-invalid="true"]:focus-visible { outline-color: #ff6b6b; }
+
+.pass { position: relative; }
+.pass input { padding-right: 4.5rem; }
+.toggle {
+  position: absolute;
+  top: 50%;
+  right: .5rem;
+  transform: translateY(-50%);
+  padding: .25rem .6rem;
+  border: 0;
+  border-radius: 6px;
+  background: rgb(255 255 255 / .2);
+  color: #fff;
+  cursor: pointer;
+}
+
+.glass .btn {
+  margin-top: 1.5rem;
+  padding: .8rem 1.25rem;
+  background: #fff;
+  border-color: #fff;
+  color: #0b2230;
+  font-weight: 600;
+}
+.glass form .btn { width: 100%; }
+.glass .btn.outline {
+  margin-top: .25rem;
+  background: transparent;
+  color: #fff;
+  border-color: #fff;
+  padding-inline: 1.75rem;
+}
+.glass .btn.outline:hover { background: rgb(255 255 255 / .18); }
+
+
+/* Password checklist (sign up): each rule gets a check mark when it is met */
+.pw-rules {
+  list-style: none;
+  margin: .1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem 1.1rem;
+  font-size: .85rem;
+}
+.pw-rules li { opacity: .75; transition: color .2s, opacity .2s; }
+.pw-rules li::before { content: "○ "; }
+.pw-rules li.ok { color: #86efac; opacity: 1; }
+.pw-rules li.ok::before { content: "✓ "; }
+
+/* Phone / small screen: panels are stacked, no swap animation */
+@media (max-width: 720px) {
+  .glass { grid-template-columns: 1fr; }
+  .glass { min-height: 0; }
+  .form-panel form[inert] { display: none; }
+  .panel { padding: 1.75rem 1.25rem; }
+  .row { grid-template-columns: 1fr; }
+  .glass.is-signup .form-panel,
+  .glass.is-signup .info-panel { transform: none; }
+  .info-panel,
+  .glass.is-signup .info-panel {
+    border-left: 0;
+    border-right: 0;
+    border-top: 1px solid rgb(255 255 255 / .3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-panel, .info-panel { transition: none; }
+}
+
+/* Toast: appears at the bottom right and disappears by itself after 2 seconds */
+.toasts {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 50;
+  display: grid;
+  gap: .5rem;
+  width: min(340px, calc(100vw - 2rem));
+}
+.toast {
+  padding: .85rem 1rem;
+  border-radius: 12px;
+  color: #fff;
+  background: rgb(15 25 36 / .92);
+  border: 1px solid rgb(255 255 255 / .25);
+  border-left: 4px solid #9fb3c8;
+  box-shadow: 0 8px 28px rgb(0 0 0 / .4);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  animation: toast-in .3s ease;
+}
+.toast.error { border-left-color: #ff6b6b; }
+.toast.ok { border-left-color: #4ade80; }
+
+@keyframes toast-in {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast { animation: none; }
+}
+
+/* "Forgot password?" and the reset password form */
+.forgot { justify-self: start; margin: 0 0 .4rem; padding: 0; background: none; border: 0; color: var(--link); font: inherit; font-size: .9rem; text-decoration: underline; cursor: pointer; }
+#resetForm .muted { font-size: .9rem; }

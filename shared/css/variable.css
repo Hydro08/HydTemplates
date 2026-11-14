@@ -1,0 +1,29 @@
+/* One place for colors, fonts and spacing. Change them here to restyle the whole template. */
+:root {
+  --ink: #16222e;
+  --muted: #5b6b7a;
+  --paper: #f4f6f8;
+  --surface: #ffffff;
+  --line: #d9e0e6;
+  --accent: #0f766e;
+  --accent-ink: #ffffff;
+  --warn: #b45309;
+  --link: var(--accent);   /* links follow the button color unless a link color is chosen */
+
+  --radius: 10px;
+  --gap: 1rem;
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e6edf3;
+    --muted: #9aa9b6;
+    --paper: #0f1720;
+    --surface: #17212c;
+    --line: #2a3745;
+    --accent: #2dd4bf;
+    --accent-ink: #06201d;
+    --warn: #f59e0b;
+  }
+}

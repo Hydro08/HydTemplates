@@ -1,0 +1,61 @@
+[
+  {
+    "id": "school-portal",
+    "name": "School Portal",
+    "type": "Portal",
+    "description": "Student portal with sign in / sign up, a verified profile and a class schedule.",
+    "path": "frontend/school-portal/index.html",
+    "thumbnail": "dashboard/thumbs/school-portal.png",
+    "backends": [
+      "none",
+      "php-sqlite",
+      "php-mysql",
+      "flask",
+      "node-express"
+    ],
+    "status": "ready",
+    "tags": [
+      "school",
+      "login",
+      "schedule"
+    ]
+  },
+  {
+    "id": "quiz-app",
+    "name": "Quiz App",
+    "type": "App",
+    "description": "Quiz system with admin, teacher and student roles. Teachers build subjects, categories and quizzes; students join a class by code and answer with copy-paste and tab switching blocked.",
+    "path": "frontend/quiz-app/index.html",
+    "thumbnail": "dashboard/thumbs/quiz-app.png",
+    "backends": [
+      "none"
+    ],
+    "status": "ready",
+    "tags": [
+      "quiz",
+      "school",
+      "login",
+      "admin",
+      "exam"
+    ]
+  },
+  {
+    "id": "library-management",
+    "name": "Library Management",
+    "type": "App",
+    "description": "Library system with a searchable book catalog, borrow and return with due dates, overdue tracking, and an admin who adds books and sees all loans.",
+    "path": "frontend/library-management/index.html",
+    "thumbnail": "dashboard/thumbs/library-management.jpg",
+    "backends": [
+      "none"
+    ],
+    "status": "ready",
+    "tags": [
+      "library",
+      "books",
+      "login",
+      "admin",
+      "school"
+    ]
+  }
+]

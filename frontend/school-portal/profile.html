@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile | School Portal</title>
+  <script>
+    // Redirect to sign in if the user is not signed in
+    try { const u = JSON.parse(sessionStorage.getItem("portalUser")); if (!u) location.replace("index.html"); else if (u.role === "admin") location.replace("admin.html"); } catch { location.replace("index.html"); }
+  </script>
+  <link rel="stylesheet" href="../../shared/css/reset.css">
+  <link rel="stylesheet" href="../../shared/css/variable.css">
+  <link rel="stylesheet" href="../../shared/css/components.css">
+  <link rel="stylesheet" href="portal.css">
+  <link rel="stylesheet" href="menu.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="head-left">
+      <button type="button" class="burger" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sideMenu">
+        <span></span><span></span><span></span>
+      </button>
+      <a class="brand" href="portal.html">Your School Name</a>
+    </div>
+    <div class="user">
+      <span class="muted" id="userName"></span>
+      <div class="theme-wrap">
+        <button type="button" class="theme-circle" id="theme-button" aria-label="Change colors" aria-haspopup="dialog" aria-expanded="false"></button>
+        <div class="theme-box" id="theme-box" role="dialog" aria-label="Colors" hidden>
+          <p class="theme-title">Colors</p>
+          <div class="theme-presets" id="theme-presets"></div>
+          <label class="theme-row" for="theme-background"><span>Background</span><input type="color" id="theme-background" value="#f4f6f8"></label>
+          <label class="theme-row" for="theme-text"><span>Text</span><input type="color" id="theme-text" value="#16222e"></label>
+          <label class="theme-row" for="theme-button-color"><span>Buttons</span><input type="color" id="theme-button-color" value="#0f766e"></label>
+          <label class="theme-row" for="theme-link"><span>Links</span><input type="color" id="theme-link" value="#0f766e"></label>
+          <p class="theme-warning" id="theme-warning" hidden>These two colors are hard to read together.</p>
+          <button type="button" class="btn ghost theme-reset" id="theme-reset">Reset</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- The menu (burger button, top left): the pages, then Sign out at the bottom -->
+  <div class="side-backdrop" id="menuBackdrop" hidden></div>
+  <aside class="side-menu" id="sideMenu" aria-label="Menu" aria-hidden="true" inert>
+    <div class="side-head">
+      <strong id="menuUserName"></strong>
+      <button type="button" class="modal-x" id="menuClose" aria-label="Close menu">&times;</button>
+    </div>
+    <a href="portal.html#dashboard" data-view="dashboard" class="needs-verified">Dashboard</a>
+    <a href="portal.html#enrollment" data-view="enrollment" class="needs-verified">Enrollment</a>
+    <a href="portal.html#schedule" data-view="schedule" class="needs-verified">Schedule</a>
+    <a href="portal.html#grades" data-view="grades" class="needs-verified">Grades</a>
+    <a href="portal.html#calendar" data-view="calendar" class="needs-verified">Calendar events</a>
+    <div class="side-sep" role="separator"></div>
+    <a href="profile.html" id="menuProfile" aria-current="page">Profile</a>
+    <div class="side-foot">
+      <button type="button" class="btn ghost" id="logoutBtn">Sign out</button>
+    </div>
+  </aside>
+
+  <main>
+    <section class="block">
+      <div class="title-row">
+        <h1>My profile</h1>
+        <span class="badge progress" id="statusBadge">Not verified</span>
+        <button type="button" class="btn ghost edit-btn" id="editBtn" hidden>&#9998; Edit</button>
+      </div>
+
+      <div class="notice" id="verifyNotice" role="status">
+        <strong>Complete your profile first.</strong>
+        Every field marked with <span class="req" aria-hidden="true">*</span> is required.
+        Your account is verified once all of them are filled in, and then you can enter the portal.
+      </div>
+
+      <p class="muted progress-text" id="progressText" aria-live="polite"></p>
+      <div class="meter" aria-hidden="true"><span id="progressBar"></span></div>
+    </section>
+
+    <section class="block form-block">
+      <form id="profileForm" novalidate>
+
+        <fieldset>
+          <legend>Name</legend>
+          <div class="fields cols-3">
+            <div class="field">
+              <label for="last_name">Surname <span class="req" aria-hidden="true">*</span></label>
+              <input id="last_name" name="last_name" type="text" autocomplete="family-name" placeholder="Dela Cruz" required aria-describedby="err-last_name">
+              <p class="error" id="err-last_name"></p>
+            </div>
+            <div class="field">
+              <label for="first_name">First name <span class="req" aria-hidden="true">*</span></label>
+              <input id="first_name" name="first_name" type="text" autocomplete="given-name" placeholder="Juan" required aria-describedby="err-first_name">
+              <p class="error" id="err-first_name"></p>
+            </div>
+            <div class="field">
+              <label for="middle_name">Middle name <span class="opt">(optional)</span></label>
+              <input id="middle_name" name="middle_name" type="text" autocomplete="additional-name" placeholder="Santos" data-optional aria-describedby="err-middle_name">
+              <p class="error" id="err-middle_name"></p>
+            </div>
+            <div class="field wide">
+              <label for="username">Username</label>
+              <input id="username" type="text" readonly tabindex="-1" placeholder="Made automatically" aria-describedby="username-help">
+              <p class="help" id="username-help">Made automatically when you signed up (year + surname + random number). Use it to sign in. You cannot change it.</p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Student info</legend>
+          <div class="fields">
+            <div class="field wide">
+              <label for="student_id">Student ID</label>
+              <input id="student_id" type="text" readonly tabindex="-1" placeholder="Assigned automatically" aria-describedby="sid-help">
+              <p class="help" id="sid-help">Assigned automatically when you signed up. You cannot change it.</p>
+            </div>
+            <div class="field">
+              <label for="birthdate">Birthdate <span class="req" aria-hidden="true">*</span></label>
+              <input id="birthdate" name="birthdate" type="date" autocomplete="bday" placeholder="" required aria-describedby="err-birthdate" min="1900-01-01">
+              <p class="error" id="err-birthdate"></p>
+            </div>
+            <div class="field">
+              <label for="age">Age</label>
+              <input id="age" type="text" readonly tabindex="-1" placeholder="Auto-calculated" aria-describedby="age-help">
+              <p class="help" id="age-help">Calculated from your birthdate.</p>
+            </div>
+            <div class="field">
+              <label for="gender">Gender <span class="req" aria-hidden="true">*</span></label>
+              <select id="gender" name="gender" autocomplete="sex" required aria-describedby="err-gender">
+                <option value="">Select…</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Prefer not to say</option>
+              </select>
+              <p class="error" id="err-gender"></p>
+            </div>
+            <div class="field">
+              <label for="civil_status">Civil status <span class="req" aria-hidden="true">*</span></label>
+              <select id="civil_status" name="civil_status" required aria-describedby="err-civil_status">
+                <option value="">Select…</option>
+                <option>Single</option>
+                <option>Married</option>
+                <option>Widowed</option>
+                <option>Separated</option>
+                <option>Divorced</option>
+              </select>
+              <p class="error" id="err-civil_status"></p>
+            </div>
+            <div class="field">
+              <label for="year_level">Year level <span class="req" aria-hidden="true">*</span></label>
+              <select id="year_level" name="year_level" required aria-describedby="err-year_level">
+                <option value="">Select…</option>
+                <option>Grade 7</option>
+                <option>Grade 8</option>
+                <option>Grade 9</option>
+                <option>Grade 10</option>
+                <option>Grade 11</option>
+                <option>Grade 12</option>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+              </select>
+              <p class="error" id="err-year_level"></p>
+            </div>
+            <div class="field">
+              <label for="section">Course / Strand <span class="req" aria-hidden="true">*</span></label>
+              <input id="section" name="section" type="text" autocomplete="off" placeholder="Start typing… e.g. Information Technology" data-courses required aria-describedby="err-section">
+              <p class="error" id="err-section"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contact</legend>
+          <div class="fields">
+            <div class="field">
+              <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="juan@example.com" required aria-describedby="err-email">
+              <p class="error" id="err-email"></p>
+            </div>
+            <div class="field">
+              <label for="phone">Mobile number <span class="req" aria-hidden="true">*</span></label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" data-phone required aria-describedby="err-phone">
+              <p class="error" id="err-phone"></p>
+            </div>
+            <p class="sub wide">Home address</p>
+            <div class="field">
+              <label for="province">Province <span class="req" aria-hidden="true">*</span></label>
+              <input id="province" name="province" type="text" autocomplete="off" placeholder="Start typing…" required aria-describedby="err-province">
+              <p class="error" id="err-province"></p>
+            </div>
+            <div class="field">
+              <label for="city">City / Municipality <span class="req" aria-hidden="true">*</span></label>
+              <input id="city" name="city" type="text" autocomplete="off" placeholder="Start typing…" required aria-describedby="err-city">
+              <p class="error" id="err-city"></p>
+            </div>
+            <div class="field">
+              <label for="barangay">Barangay <span class="req" aria-hidden="true">*</span></label>
+              <input id="barangay" name="barangay" type="text" autocomplete="off" placeholder="Start typing…" required aria-describedby="err-barangay">
+              <p class="error" id="err-barangay"></p>
+            </div>
+            <div class="field">
+              <label for="zip">ZIP code <span class="req" aria-hidden="true">*</span></label>
+              <input id="zip" name="zip" type="text" autocomplete="off" placeholder="1000" required aria-describedby="err-zip" inputmode="numeric">
+              <p class="error" id="err-zip"></p>
+            </div>
+            <div class="field wide">
+              <label for="street">House No. / Street <span class="req" aria-hidden="true">*</span></label>
+              <input id="street" name="street" type="text" autocomplete="off" placeholder="123 Rizal Street" required aria-describedby="err-street">
+              <p class="error" id="err-street"></p>
+            </div>
+            <p class="sub wide">Province address</p>
+            <label class="check wide" for="sameAddress"><input type="checkbox" id="sameAddress" checked> Same as home address</label>
+            <div class="fields wide" id="provFields" hidden>
+              <div class="field">
+                <label for="prov_province">Province <span class="req" aria-hidden="true">*</span></label>
+                <input id="prov_province" name="prov_province" type="text" autocomplete="off" placeholder="Start typing…" required aria-describedby="err-prov_province">
+                <p class="error" id="err-prov_province"></p>
+              </div>
+              <div class="field">
+                <label for="prov_city">City / Municipality <span class="req" aria-hidden="true">*</span></label>
+                <input id="prov_city" name="prov_city" type="text" autocomplete="off" placeholder="Start typing…" required aria-describedby="err-prov_city">
+                <p class="error" id="err-prov_city"></p>
+              </div>
+              <div class="field">
+                <label for="prov_barangay">Barangay <span class="req" aria-hidden="true">*</span></label>
+                <input id="prov_barangay" name="prov_barangay" type="text" autocomplete="off" placeholder="Start typing…" required aria-describedby="err-prov_barangay">
+                <p class="error" id="err-prov_barangay"></p>
+              </div>
+              <div class="field">
+                <label for="prov_zip">ZIP code <span class="req" aria-hidden="true">*</span></label>
+                <input id="prov_zip" name="prov_zip" type="text" autocomplete="off" placeholder="1000" required aria-describedby="err-prov_zip" inputmode="numeric">
+                <p class="error" id="err-prov_zip"></p>
+              </div>
+              <div class="field wide">
+                <label for="prov_street">House No. / Street <span class="req" aria-hidden="true">*</span></label>
+                <input id="prov_street" name="prov_street" type="text" autocomplete="off" placeholder="123 Rizal Street" required aria-describedby="err-prov_street">
+                <p class="error" id="err-prov_street"></p>
+              </div>
+            </div>
+            <p class="help wide" id="addressNotice" hidden>Could not load the list of places, so please type your address manually.</p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Parents / Guardian</legend>
+          <p class="sub">Father</p>
+          <div class="fields cols-3">
+            <div class="field">
+              <label for="father_name">Full name <span class="req" aria-hidden="true">*</span></label>
+              <input id="father_name" name="father_name" type="text" autocomplete="off" placeholder="Pedro Dela Cruz" required aria-describedby="err-father_name">
+              <p class="error" id="err-father_name"></p>
+            </div>
+            <div class="field">
+              <label for="father_occupation">Occupation <span class="req" aria-hidden="true">*</span></label>
+              <input id="father_occupation" name="father_occupation" type="text" autocomplete="off" placeholder="Driver" required aria-describedby="err-father_occupation">
+              <p class="error" id="err-father_occupation"></p>
+            </div>
+            <div class="field">
+              <label for="father_phone">Contact number <span class="req" aria-hidden="true">*</span></label>
+              <input id="father_phone" name="father_phone" type="tel" autocomplete="off" data-phone required aria-describedby="err-father_phone">
+              <p class="error" id="err-father_phone"></p>
+            </div>
+          </div>
+          <p class="sub">Mother</p>
+          <div class="fields cols-3">
+            <div class="field">
+              <label for="mother_name">Full name <span class="req" aria-hidden="true">*</span></label>
+              <input id="mother_name" name="mother_name" type="text" autocomplete="off" placeholder="Maria Dela Cruz" required aria-describedby="err-mother_name">
+              <p class="error" id="err-mother_name"></p>
+            </div>
+            <div class="field">
+              <label for="mother_occupation">Occupation <span class="req" aria-hidden="true">*</span></label>
+              <input id="mother_occupation" name="mother_occupation" type="text" autocomplete="off" placeholder="Teacher" required aria-describedby="err-mother_occupation">
+              <p class="error" id="err-mother_occupation"></p>
+            </div>
+            <div class="field">
+              <label for="mother_phone">Contact number <span class="req" aria-hidden="true">*</span></label>
+              <input id="mother_phone" name="mother_phone" type="tel" autocomplete="off" data-phone required aria-describedby="err-mother_phone">
+              <p class="error" id="err-mother_phone"></p>
+            </div>
+          </div>
+          <p class="sub">Guardian</p>
+          <div class="fields cols-3">
+            <div class="field">
+              <label for="guardian_name">Full name <span class="req" aria-hidden="true">*</span></label>
+              <input id="guardian_name" name="guardian_name" type="text" autocomplete="off" placeholder="Ana Reyes" required aria-describedby="err-guardian_name">
+              <p class="error" id="err-guardian_name"></p>
+            </div>
+            <div class="field">
+              <label for="guardian_occupation">Occupation <span class="req" aria-hidden="true">*</span></label>
+              <input id="guardian_occupation" name="guardian_occupation" type="text" autocomplete="off" placeholder="Nurse" required aria-describedby="err-guardian_occupation">
+              <p class="error" id="err-guardian_occupation"></p>
+            </div>
+            <div class="field">
+              <label for="guardian_phone">Contact number <span class="req" aria-hidden="true">*</span></label>
+              <input id="guardian_phone" name="guardian_phone" type="tel" autocomplete="off" data-phone required aria-describedby="err-guardian_phone">
+              <p class="error" id="err-guardian_phone"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="form-actions" id="formActions">
+          <button class="btn" type="submit" id="saveBtn">Save and verify</button>
+          <button class="btn ghost" type="button" id="cancelBtn" hidden>Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="block" id="security">
+      <h2>Account security</h2>
+      <form id="passwordForm" class="card pw-card" novalidate>
+        <h3>Change password</h3>
+        <p class="muted">Use at least 8 characters with an uppercase letter, a number and a special character.</p>
+
+        <label for="curPass">Current password</label>
+        <input id="curPass" type="password" autocomplete="current-password" required>
+
+        <label for="newPass">New password</label>
+        <input id="newPass" type="password" autocomplete="new-password" required>
+        <ul id="newRules" aria-label="Password requirements"></ul>
+
+        <label for="newPass2">Confirm new password</label>
+        <input id="newPass2" type="password" autocomplete="new-password" required>
+
+        <label class="check"><input type="checkbox" id="showPw"> Show passwords</label>
+
+        <p id="pwMsg" class="form-msg" role="status" aria-live="polite"></p>
+        <button class="btn" type="submit">Update password</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Before editing a verified profile: "are you sure?" -->
+  <div class="modal-backdrop" id="editConfirm" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="editConfirmTitle" aria-describedby="editConfirmText">
+      <h2 id="editConfirmTitle">Edit your profile?</h2>
+      <p class="muted" id="editConfirmText">You are about to change your profile details. Do you want to continue?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="editConfirmNo">Cancel</button>
+        <button type="button" class="btn" id="editConfirmYes">Yes, edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaving while editing (back button, a link, Sign out): save, discard, or X = keep editing -->
+  <div class="modal-backdrop" id="leaveModal" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="leaveTitle" aria-describedby="leaveText">
+      <button type="button" class="modal-x" id="leaveX" aria-label="Close and keep editing">&times;</button>
+      <h2 id="leaveTitle">Unsaved changes</h2>
+      <p class="muted" id="leaveText">You changed your profile but did not save it. Do you want to save your changes or discard them?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost danger" id="leaveDiscard">Discard</button>
+        <button type="button" class="btn" id="leaveSave">Save changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <script src="../../shared/js/config.js"></script>
+  <script src="../../shared/js/utils.js"></script>
+  <script src="demo-profile.js"></script>
+  <script src="password.js"></script>
+  <script src="session.js"></script>
+  <script src="menu.js"></script>
+  <script src="theme.js"></script>
+  <script src="locations.js"></script>
+  <script src="phone.js"></script>
+  <script src="courses.js"></script>
+  <script src="profile.js"></script>
+  <script src="change-password.js"></script>
+</body>
+</html>

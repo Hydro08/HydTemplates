@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Library Management</title>
+<link rel="stylesheet" href="library.css?v=107">
+</head>
+<body class="auth-page">
+
+<!-- SIGN IN / SIGN UP (glass card) -->
+<main id="auth" class="auth">
+  <form id="authForm" class="glass">
+    <h1>Library</h1>
+    <p id="authHint"></p>
+    <p class="note ok" id="deepHint" hidden>Sign in to open the book you scanned.</p>
+    <label hidden>Full name<input id="fullName" placeholder="e.g. Juan Dela Cruz" autocomplete="name"></label>
+    <label>Username<input id="username" placeholder="Enter your username" required autocomplete="username"></label>
+    <label>Password<input id="password" type="password" placeholder="Enter your password" required autocomplete="current-password"></label>
+    <button class="btn" type="submit" id="authBtn">Sign in</button>
+    <p class="switch"><a href="#" id="toggleAuth">No account? Sign up</a></p>
+    <p class="error" id="authError" role="alert"></p>
+  </form>
+</main>
+
+<!-- APP -->
+<div id="app" hidden>
+  <header class="top">
+    <button class="burger" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span><b class="dot" id="burgerCount" hidden></b></button>
+    <strong id="pageTitle">Dashboard</strong>
+    <span class="muted" id="who"></span>
+    <!-- Color circle (theme.js): pick background, text and button colors. Same idea as the Quiz App and School Portal. -->
+    <div class="theme-wrap">
+      <button type="button" class="theme-circle" id="theme-button" aria-label="Change colors" aria-haspopup="dialog" aria-expanded="false"></button>
+      <div class="theme-box" id="theme-box" role="dialog" aria-label="Colors" hidden>
+        <p class="theme-title">Colors</p>
+        <div class="theme-presets" id="theme-presets"></div>
+        <label class="theme-row" for="theme-background"><span>Background</span><input type="color" id="theme-background" value="#f5f6fa"></label>
+        <label class="theme-row" for="theme-text"><span>Text</span><input type="color" id="theme-text" value="#1d2433"></label>
+        <label class="theme-row" for="theme-button-color"><span>Buttons</span><input type="color" id="theme-button-color" value="#2f5bea"></label>
+        <p class="theme-warning" id="theme-warning" hidden>These two colors are hard to read together.</p>
+        <button type="button" class="btn ghost theme-reset" id="theme-reset">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="backdrop" id="backdrop" hidden></div>
+  <aside class="side" id="side" aria-hidden="true">
+    <div class="side-head"><strong>Library</strong><button class="x" id="menuClose" aria-label="Close menu">×</button></div>
+    <nav id="nav">
+      <a href="#" data-view="dashboard" class="active">Dashboard</a>
+      <a href="#" data-view="books">Books</a>
+      <a href="#" data-view="loans" id="loansLink">My Loans <span class="count" id="loansCount" hidden></span></a>
+      <a href="#" data-view="admin" id="adminLink" hidden>Manage <span class="count" id="manageCount" hidden></span></a>
+      <a href="#" data-view="history" id="historyLink" hidden>History</a>
+    </nav>
+    <div class="side-foot"><button class="btn" id="logout">Sign out</button></div>
+  </aside>
+
+  <main class="page">
+    <section id="v-dashboard" class="view">
+      <h2 id="hello"></h2>
+      <div class="stats" id="stats"></div>
+      <h3 id="dueTitle">Due soon</h3><div id="dueSoon"></div>
+    </section>
+
+    <section id="v-books" class="view" hidden>
+      <div class="bar">
+        <input id="search" placeholder="Search title or author…" aria-label="Search books">
+        <select id="category" aria-label="Category"><option value="all">All categories</option></select>
+      </div>
+      <div id="books" class="grid"></div>
+    </section>
+
+    <section id="v-loans" class="view" hidden><div id="myLoans"></div></section>
+
+    <section id="v-admin" class="view" hidden>
+      <div class="col"><h3 id="reqTitle">Borrow requests</h3><div id="requests"></div></div>
+      <div class="col"><h3 id="retTitle">Return requests</h3><div id="returns"></div></div>
+      <div class="col"><h3>Currently borrowed</h3><div id="activeLoans"></div></div>
+    </section>
+
+    <section id="v-history" class="view" hidden><div id="history"></div></section>
+  </main>
+</div>
+<!-- Book front page: opens when a book card in Books is clicked (the book zooms in from its card, it does not open) -->
+<div class="cover-wrap" id="coverWrap" hidden>
+  <div class="loan-modal cover-card" id="bookModal" role="dialog" aria-modal="true" aria-label="Book front page">
+    <button class="loan-x" id="coverClose" aria-label="Close">×</button>
+    <div class="cc">
+      <h3 id="bcTitle"></h3><span class="lc-line"></span><p id="bcAuthor"></p><p class="cc-desc" id="bcDesc" hidden></p>
+      <!-- the same QR is stuck on the library shelf: scanning it opens this book here -->
+      <div class="bc-qr"><div class="qr-box" id="bcQrBox"></div><small>Scan at the library shelf</small><button type="button" class="btn" id="bcQrPrint" hidden>Print shelf QR</button></div>
+    </div>
+    <div class="lockwrap" id="coverLock" hidden><span class="biglock" id="coverLockIcon"></span><span class="locktext" id="coverLockText"></span></div>
+  </div>
+</div>
+<!-- Add / edit a book (librarian): opens from the "+" card or the Edit button on a book in Books -->
+<div class="cover-wrap" id="editWrap" hidden>
+  <form class="edit-modal" id="editForm" role="dialog" aria-modal="true" aria-labelledby="editTitle" autocomplete="off">
+    <button type="button" class="loan-x" id="editClose" aria-label="Close">×</button>
+    <h3 id="editTitle">Add a book</h3>
+    <div class="edit-head" id="editHead"><strong id="ehTitle"></strong><em id="ehAuthor"></em></div>
+    <label>Book name<input id="eTitle" required maxlength="80" placeholder="e.g. Noli Me Tangere"></label>
+    <label>Author<input id="eAuthor" required maxlength="60" placeholder="e.g. José Rizal"></label>
+    <div class="edit-two">
+      <label>Category<input id="eCategory" required maxlength="30" list="catList" placeholder="e.g. Classics"></label>
+      <label>Quantity<input id="eCopies" type="number" min="1" max="999" value="1" required></label>
+    </div>
+    <datalist id="catList"></datalist>
+    <label>Description <span class="muted">(optional)</span><textarea id="eDesc" maxlength="300" rows="3" placeholder="What is the book about?"></textarea></label>
+    <div class="color-row">
+      <span>Cover color <small class="muted" id="eColorHint"></small></span>
+      <span class="color-tools"><input type="color" id="eColor" value="#2f5bea" aria-label="Cover color"><button type="button" class="btn ghost" id="eAuto">Auto</button></span>
+    </div>
+    <p class="error" id="editError" role="alert"></p>
+    <div class="edit-foot"><button type="button" class="btn ghost" id="editCancel">Cancel</button><button class="btn" id="editSave">Save</button></div>
+  </form>
+</div>
+<!-- Loan details: opens when a book in My Loans is clicked -->
+<div class="cover-wrap" id="loanWrap" hidden>
+  <div class="loan-modal" id="loanModal" role="dialog" aria-modal="true" aria-label="Loan details">
+    <button class="loan-x" id="loanClose" aria-label="Close">×</button>
+    <!-- the book cover that swings open (decoration only) -->
+    <div class="lc" id="loanCover" aria-hidden="true"><div class="lc-front"><span class="lc-line"></span><h3 id="lcTitle"></h3><p id="lcAuthor"></p></div><div class="lc-back"></div></div>
+    <div class="loan-grid" id="loanGrid"></div>
+    <div class="loan-foot" id="loanFoot"></div>
+  </div>
+</div>
+<!-- Printed shelf label (only shown when printing): the librarian prints it from a book's popup -->
+<div id="printLabel" aria-hidden="true"><h2 id="plTitle"></h2><p id="plAuthor"></p><div id="plQr"></div><p class="pl-note">Scan to open this book in the library app</p></div>
+<script src="../../shared/js/back-to-templates.js"></script>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<script src="qr.js?v=107"></script>
+<script src="theme.js?v=107"></script>
+<script src="library.js?v=107"></script>
+</body>
+</html>

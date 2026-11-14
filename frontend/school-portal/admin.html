@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin | School Portal</title>
+  <script>
+    // Not signed in? Back to sign in. The page stays hidden until admin.js has checked the role with the server.
+    try { if (!JSON.parse(sessionStorage.getItem("portalUser"))) location.replace("index.html"); } catch { location.replace("index.html"); }
+    document.documentElement.style.visibility = "hidden";
+  </script>
+  <link rel="stylesheet" href="../../shared/css/reset.css">
+  <link rel="stylesheet" href="../../shared/css/variable.css">
+  <link rel="stylesheet" href="../../shared/css/components.css">
+  <link rel="stylesheet" href="portal.css">
+  <link rel="stylesheet" href="menu.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="head-left">
+      <button type="button" class="burger" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sideMenu">
+        <span></span><span></span><span></span>
+      </button>
+      <a class="brand" href="admin.html">Your School Name <span class="badge ready">Admin</span></a>
+    </div>
+    <div class="user">
+      <span class="muted" id="userName"></span>
+      <div class="theme-wrap">
+        <button type="button" class="theme-circle" id="theme-button" aria-label="Change colors" aria-haspopup="dialog" aria-expanded="false"></button>
+        <div class="theme-box" id="theme-box" role="dialog" aria-label="Colors" hidden>
+          <p class="theme-title">Colors</p>
+          <div class="theme-presets" id="theme-presets"></div>
+          <label class="theme-row" for="theme-background"><span>Background</span><input type="color" id="theme-background" value="#f4f6f8"></label>
+          <label class="theme-row" for="theme-text"><span>Text</span><input type="color" id="theme-text" value="#16222e"></label>
+          <label class="theme-row" for="theme-button-color"><span>Buttons</span><input type="color" id="theme-button-color" value="#0f766e"></label>
+          <label class="theme-row" for="theme-link"><span>Links</span><input type="color" id="theme-link" value="#0f766e"></label>
+          <p class="theme-warning" id="theme-warning" hidden>These two colors are hard to read together.</p>
+          <button type="button" class="btn ghost theme-reset" id="theme-reset">Reset</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="side-backdrop" id="menuBackdrop" hidden></div>
+  <aside class="side-menu" id="sideMenu" aria-label="Menu" aria-hidden="true" inert>
+    <div class="side-head">
+      <strong id="menuUserName"></strong>
+      <button type="button" class="modal-x" id="menuClose" aria-label="Close menu">&times;</button>
+    </div>
+    <a href="admin.html#overview" data-view="overview">Overview</a>
+    <a href="admin.html#students" data-view="students">Students</a>
+    <a href="admin.html#announcements" data-view="announcements">Announcements</a>
+    <div class="side-foot">
+      <button type="button" class="btn ghost" id="logoutBtn">Sign out</button>
+    </div>
+  </aside>
+
+  <main>
+    <section id="overview" class="block view">
+      <h1>Admin overview</h1>
+      <p class="muted">A summary of your school portal.</p>
+      <ul class="cards stats" id="statCards"></ul>
+    </section>
+
+    <section id="students" class="block view" hidden>
+      <h1>Students</h1>
+      <p class="muted" id="studentsNote"></p>
+      <div class="toolbar">
+        <input type="search" id="studentSearch" placeholder="Search name, ID or username" aria-label="Search students">
+        <select id="studentFilter" aria-label="Filter by status">
+          <option value="all">All</option>
+          <option value="verified">Verified</option>
+          <option value="incomplete">Not verified</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Student ID</th><th>Course / Strand</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="studentsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="announcements" class="block view" hidden>
+      <h1>Announcements</h1>
+      <p class="muted">These show on every student's dashboard.</p>
+      <form id="announceForm" class="card admin-form" novalidate>
+        <label for="annTitle">Title</label>
+        <input id="annTitle" maxlength="80" required>
+        <label for="annText">Message</label>
+        <input id="annText" maxlength="200" required>
+        <button class="btn" type="submit">Post announcement</button>
+        <p class="form-msg" id="annMsg" role="status"></p>
+      </form>
+      <ul class="cards" id="annList"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer muted"><p>&copy; <span id="year"></span> Your School Name</p></footer>
+
+  <script src="../../shared/js/config.js"></script>
+  <script src="../../shared/js/utils.js"></script>
+  <script src="demo-profile.js"></script>
+  <script src="password.js"></script>
+  <script src="session.js"></script>
+  <script src="menu.js"></script>
+  <script src="theme.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

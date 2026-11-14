@@ -1,0 +1,11 @@
+/* Admin page (admin.html). Colors come from the palette variables, so it follows the color circle. */
+.brand .badge { margin-left: .4rem; vertical-align: middle; }
+.stats .card strong { display: block; font-size: 2rem; line-height: 1.2; }
+.toolbar { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.toolbar input { flex: 1 1 220px; }
+.admin-form { display: grid; gap: .4rem; max-width: 520px; margin: 1rem 0 1.5rem; }
+.admin-form label { font-weight: 600; margin-top: .4rem; }
+.admin-form .btn { margin-top: .75rem; justify-self: start; }
+.btn.danger { color: #dc2626; border-color: #dc2626; background: transparent; padding: .3rem .7rem; }
+.cards .card .btn { margin-top: .6rem; padding: .3rem .7rem; }
+.empty { padding: 1rem; color: var(--muted); }

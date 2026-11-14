@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | School Portal</title>
+  <link rel="stylesheet" href="../../shared/css/reset.css">
+  <link rel="stylesheet" href="../../shared/css/variable.css">
+  <link rel="stylesheet" href="../../shared/css/components.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth">
+  <main class="glass" id="authCard">
+
+    <!-- Panel 1: the forms (sign in / sign up) -->
+    <section class="panel form-panel" aria-label="Account form">
+      <p class="school">Your School Name</p>
+
+      <form id="loginForm" novalidate>
+        <h1>Sign in</h1>
+
+        <label for="loginUser">Username</label>
+        <input id="loginUser" name="username" autocomplete="username" placeholder="juandelacruz/school id" required>
+
+        <label for="loginPass">Password</label>
+        <div class="pass">
+          <input id="loginPass" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+          <button type="button" class="toggle" data-target="loginPass" aria-label="Show password">Show</button>
+        </div>
+
+        <button type="button" class="forgot" id="forgotBtn">Forgot password?</button>
+
+        <button class="btn" type="submit">Sign in</button>
+      </form>
+
+      <form id="resetForm" novalidate inert>
+        <h1>Reset password</h1>
+
+        <div id="resetRequest">
+          <p class="muted">Enter your username, Student ID or email. We will send you a link to choose a new password.</p>
+          <label for="resetId">Username, Student ID or email</label>
+          <input id="resetId" name="identifier" autocomplete="username" required>
+        </div>
+
+        <div id="resetSet" hidden>
+          <label for="resetNew">New password</label>
+          <div class="pass">
+            <input id="resetNew" name="password" type="password" autocomplete="new-password" placeholder="••••••••" required>
+            <button type="button" class="toggle" data-target="resetNew" aria-label="Show password">Show</button>
+          </div>
+          <label for="resetNew2">Confirm new password</label>
+          <input id="resetNew2" name="password2" type="password" autocomplete="new-password" placeholder="••••••••" required>
+          <ul id="resetRules" aria-label="Password requirements"></ul>
+        </div>
+
+        <button class="btn" type="submit" id="resetSubmit">Send reset link</button>
+      </form>
+
+      <form id="registerForm" novalidate inert>
+        <h1>Sign up</h1>
+
+        <div class="row">
+          <div class="cell">
+            <label for="regLast">Surname</label>
+            <input id="regLast" name="last_name" autocomplete="family-name" placeholder="Dela Cruz" required>
+          </div>
+          <div class="cell">
+            <label for="regFirst">First name</label>
+            <input id="regFirst" name="first_name" autocomplete="given-name" placeholder="Juan" required>
+          </div>
+        </div>
+
+        <div class="row single">
+          <div class="cell">
+            <label for="regMiddle">Middle name <span class="opt">(optional)</span></label>
+            <input id="regMiddle" name="middle_name" autocomplete="additional-name" placeholder="Santos">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="cell">
+            <label for="regPass">Password</label>
+            <div class="pass">
+              <input id="regPass" name="password" type="password" autocomplete="new-password" placeholder="••••••••" required>
+              <button type="button" class="toggle" data-target="regPass" aria-label="Show password">Show</button>
+            </div>
+          </div>
+          <div class="cell">
+            <label for="regPass2">Confirm password</label>
+            <input id="regPass2" name="password2" type="password" autocomplete="new-password" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <ul id="regRules" aria-label="Password requirements"></ul>
+
+        <button class="btn" type="submit">Create account</button>
+      </form>
+    </section>
+
+    <!-- Panel 2: text + button that switches to the other form -->
+    <aside class="panel info-panel" aria-live="polite">
+      <h2 id="infoTitle">Don't have an account yet?</h2>
+      <p id="infoText">Create an account to see your announcements and class schedule.</p>
+      <button type="button" class="btn outline" id="switchBtn">Sign up</button>
+    </aside>
+
+  </main>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <script src="../../shared/js/config.js"></script>
+  <script src="demo-profile.js"></script>
+  <script src="password.js"></script>
+  <script src="auth.js"></script>
+  <script src="../../shared/js/back-to-templates.js"></script>
+</body>
+</html>

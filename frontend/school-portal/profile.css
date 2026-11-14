@@ -1,0 +1,207 @@
+.title-row { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; }
+.title-row .badge { font-size: .85rem; padding: .2rem .7rem; }
+
+.notice {
+  margin: 1rem 0;
+  padding: .85rem 1rem;
+  border: 1px solid var(--warn);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.notice[hidden] { display: none; }
+
+.req { color: #dc2626; font-weight: 700; }
+.opt { font-weight: 400; color: var(--muted); font-size: .85em; }
+@media (prefers-color-scheme: dark) { .req { color: #f87171; } }
+
+.progress-text { margin-top: 1rem; font-size: .9rem; }
+.meter { height: 6px; margin-top: .4rem; border-radius: 999px; background: var(--line); overflow: hidden; }
+.meter span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
+
+.form-block { padding-top: 0; }
+fieldset {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  min-width: 0;
+}
+legend { padding: 0 .4rem; font-weight: 700; }
+
+.fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: .9rem 1rem; }
+.fields.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.sub { margin: .25rem 0 .6rem; font-weight: 700; color: var(--muted); }
+.sub:not(:first-of-type) { margin-top: 1.1rem; }
+.help { margin-top: .25rem; font-size: .85rem; color: var(--muted); }
+.field { min-width: 0; }
+.field.wide { grid-column: 1 / -1; }
+.field label { display: block; font-weight: 600; margin-bottom: .3rem; }
+.field input, .field select {
+  width: 100%;
+  font: inherit;
+  color: var(--ink);
+  padding: .6rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+/* Age is calculated, so it looks read-only */
+.field input[readonly] { background: transparent; border-style: dashed; cursor: default; }
+
+/* Native controls (date picker icon, select arrow) follow the light/dark theme, so the icon is white in dark mode */
+.field input, .field select { color-scheme: light; }
+@media (prefers-color-scheme: dark) { .field input, .field select { color-scheme: dark; } }
+.field input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; }
+
+/* A field that is empty or wrong turns red, with a message below it */
+.field [aria-invalid="true"] { border-color: #dc2626; background: rgb(220 38 38 / .08); box-shadow: 0 0 0 1px #dc2626; }
+.error { min-height: 0; margin-top: .25rem; font-size: .85rem; color: #dc2626; }
+.error:empty { display: none; }
+@media (prefers-color-scheme: dark) {
+  .error { color: #f87171; }
+  .field [aria-invalid="true"] { border-color: #f87171; box-shadow: 0 0 0 1px #f87171; }
+}
+
+#profileForm .btn { width: 100%; padding: .8rem 1.25rem; font-weight: 600; }
+@media (min-width: 641px) { #profileForm .btn { width: auto; min-width: 220px; } }
+
+@media (max-width: 860px) { .fields.cols-3 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) {
+  .fields, .fields.cols-3 { grid-template-columns: 1fr; }
+  fieldset { padding: .9rem .9rem 1.1rem; }
+}
+
+/* Toast */
+.toasts { position: fixed; right: 1rem; bottom: 1rem; z-index: 50; display: grid; gap: .5rem; width: min(340px, calc(100vw - 2rem)); }
+.toast {
+  padding: .85rem 1rem;
+  border-radius: 12px;
+  color: #fff;
+  background: rgb(15 25 36 / .94);
+  border-left: 4px solid #9fb3c8;
+  box-shadow: 0 8px 28px rgb(0 0 0 / .35);
+  animation: toast-in .3s ease;
+}
+.toast.error { border-left-color: #ff6b6b; }
+.toast.ok { border-left-color: #4ade80; }
+@keyframes toast-in { from { transform: translateX(120%); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .toast { animation: none; } .meter span { transition: none; } }
+
+/* Address suggestions */
+.combo { position: relative; }
+.combo-list {
+  position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% - .05rem);
+  margin: .15rem 0 0; padding: .25rem; list-style: none;
+  max-height: 15rem; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgb(0 0 0 / .22);
+}
+.combo-list[hidden] { display: none; }
+.combo-list li { padding: .5rem .65rem; border-radius: 6px; cursor: pointer; }
+.combo-list li strong { color: var(--accent); }
+.combo-list li:hover, .combo-list li[aria-selected="true"] { background: var(--paper); outline: 1px solid var(--line); }
+.combo-list .combo-note { color: var(--muted); cursor: default; font-size: .9rem; }
+.combo-list .combo-note:hover { background: none; outline: 0; }
+.combo-list li.has-code { display: flex; justify-content: space-between; align-items: baseline; gap: .75rem; }
+.combo-code { flex: none; color: var(--muted); font-size: .85rem; }
+.field.combo .error { position: relative; }
+
+/* Locked fields (waiting for the field before them) */
+.field input:disabled { opacity: .55; cursor: not-allowed; background: var(--line); border-style: dashed; }
+.help.wide { grid-column: 1 / -1; }
+
+/* Phone field: flag + country code picker in front of the number */
+.phone-field {
+  position: relative; display: flex; align-items: stretch;
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper);
+}
+.phone-field:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.field .phone-field input.phone-local {
+  flex: 1; min-width: 0; border: 0; background: transparent; box-shadow: none; border-radius: 0 var(--radius) var(--radius) 0; outline: 0;
+}
+.cc-btn {
+  display: flex; align-items: center; gap: .4rem; flex: none;
+  padding: 0 .6rem; font: inherit; color: var(--ink); cursor: pointer;
+  background: transparent; border: 0; border-right: 1px solid var(--line); border-radius: var(--radius) 0 0 var(--radius);
+}
+.cc-btn:hover { background: var(--surface); }
+.cc-btn:focus-visible { outline-offset: -3px; }
+.cc-caret { font-size: .7rem; color: var(--muted); }
+.flag { flex: none; width: 20px; height: 15px; object-fit: cover; border-radius: 2px; box-shadow: 0 0 0 1px rgb(0 0 0 / .15); }
+.flag-code { display: inline-grid; place-items: center; height: 15px; font-size: .6rem; font-weight: 700; background: var(--line); color: var(--muted); box-shadow: none; }
+
+.cc-panel {
+  position: absolute; z-index: 40; left: 0; top: calc(100% + .25rem); width: min(320px, 82vw);
+  padding: .4rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgb(0 0 0 / .22);
+}
+.cc-panel[hidden] { display: none; }
+.field .cc-search { margin-bottom: .35rem; padding: .5rem .65rem; }
+.cc-list { list-style: none; margin: 0; padding: 0; max-height: 14rem; overflow-y: auto; }
+.cc-list li { display: flex; align-items: center; gap: .55rem; padding: .45rem .55rem; border-radius: 6px; cursor: pointer; }
+.cc-list li.active { background: var(--paper); outline: 1px solid var(--line); }
+.cc-list li[aria-selected="true"] .cc-name { font-weight: 700; }
+.cc-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cc-code { color: var(--muted); font-variant-numeric: tabular-nums; }
+.cc-list .cc-none { color: var(--muted); cursor: default; }
+/* Last column: open the list toward the left so it does not run past the form */
+.cols-3 .field:nth-child(3n) .cc-panel { left: auto; right: 0; }
+@media (max-width: 860px) { .cols-3 .field:nth-child(3n) .cc-panel { left: 0; right: auto; } .cols-3 .field:nth-child(2n) .cc-panel { left: auto; right: 0; } }
+@media (max-width: 640px) { .cols-3 .field .cc-panel, .cols-3 .field:nth-child(2n) .cc-panel { left: 0; right: auto; } }
+
+html.modal-open, html.modal-open body { overflow: hidden; }
+@media (prefers-reduced-motion: reduce) { .modal { animation: none; } }
+
+/* ---------- Edit button (right of the Verified badge) and the form buttons ---------- */
+.btn[hidden], .form-actions[hidden] { display: none; }
+.edit-btn { padding: .2rem .8rem; font-size: .85rem; }
+.form-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+@media (max-width: 640px) { .form-actions { flex-direction: column; } }
+
+/* A verified profile is locked: it reads like plain text until "Edit" is chosen */
+.viewing .field input:disabled,
+.viewing .field select:disabled {
+  opacity: 1; cursor: default; background: transparent; border-style: dashed;
+  color: var(--ink); -webkit-text-fill-color: var(--ink);
+  appearance: none; -webkit-appearance: none;
+}
+.viewing .field input[type="date"]::-webkit-calendar-picker-indicator { display: none; }
+.viewing .cc-btn:disabled { cursor: default; color: var(--ink); }
+.viewing .cc-caret { display: none; }
+
+/* ---------- Questions (modals) ---------- */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 1rem;
+  background: rgb(0 0 0 / .5);
+}
+.modal-backdrop[hidden] { display: none; }
+.modal {
+  position: relative; width: min(420px, 100%); padding: 1.5rem 1.5rem 1.25rem;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 20px 50px rgb(0 0 0 / .4);
+  animation: modal-in .18s ease;
+}
+@keyframes modal-in { from { transform: translateY(8px) scale(.98); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal h2 { margin: 0 2rem .5rem 0; font-size: 1.25rem; }
+.modal p { margin: 0 0 1.25rem; }
+.modal-x {
+  display: grid; place-items: center; flex: none; width: 36px; height: 36px;
+  font-size: 1.5rem; line-height: 1; color: var(--muted);
+  background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer;
+}
+.modal .modal-x { position: absolute; top: .6rem; right: .6rem; }
+.modal-x:hover { background: var(--paper); border-color: var(--line); color: var(--ink); }
+.modal-actions { display: flex; justify-content: flex-end; gap: .6rem; flex-wrap: wrap; }
+.modal-actions .btn { padding: .55rem 1.1rem; }
+.btn.danger { color: #b91c1c; border-color: #b91c1c; }
+@media (prefers-color-scheme: dark) { .btn.danger { color: #f87171; border-color: #f87171; } }
+
+/* The red background of a wrong field must not color the list of choices (the text was unreadable) */
+.field select[aria-invalid="true"] option { background: var(--surface); color: var(--ink); }
+
+/* Home address / Province address */
+.sub.wide, .check.wide, .fields.wide { grid-column: 1 / -1; }
+.fields.wide { margin: 0; padding: 0; }
+#provFields[hidden] { display: none; }

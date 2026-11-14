@@ -1,0 +1,1933 @@
+/* ==========================================================================
+   quiz.css  -  Styles for the dashboard (and the logo on every page)
+   --------------------------------------------------------------------------
+   Colors, fonts and spacing live in shared/css/variable.css.
+   Buttons (.btn), badges (.badge) and .muted live in shared/css/components.css.
+   This file only has the styles that are special to the quiz app.
+
+   Sections:
+     1. Page layout
+     2. Cards, lists and rows
+     3. Messages and score
+     4. Taking a quiz
+     5. Joining a class and the class code
+     6. Side menu (drawer)
+     7. Floating rules box (modal)
+     8. Toast (pop-up messages)
+     9. Logo (typing + 3D text)
+   ========================================================================== */
+
+/* ---------- 1. Page layout ---------- */
+
+/* Anything with the "hidden" attribute is really hidden */
+[hidden] {
+  display: none !important;
+}
+
+/* The whole dashboard page is as tall as the screen, so the footer
+   (the "View quiz rules" link) always sits at the very bottom */
+.dashboard-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The main area of the dashboard: uses the whole screen.
+   --page-padding is the space at the left and right. It is small on phones and bigger on big screens. */
+:root {
+  --page-padding: clamp(1rem, 4vw, 4rem);
+}
+.dashboard-main {
+  width: 100%;
+  padding: 2rem var(--page-padding);
+}
+
+/* The very bottom of the page */
+.page-footer {
+  margin-top: auto;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+/* Top bar with the small logo */
+.logo-bar {
+  padding: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;           /* on a small screen the buttons go under the title */
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+/* The buttons and links beside the title (site.config.js, site-links.js) */
+.site-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+.site-link:not(.btn) {
+  color: var(--link);
+  text-decoration: underline;
+}
+
+/* Bar with the menu button (left) and the user's name + color circle (right) */
+.user-bar {
+  width: 100%;
+  padding: 0 var(--page-padding);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* On computers and tablets the bar sits ON the same line as the title (menu button left, name and
+   color circle right), instead of under it. --top-bar-height is the height of that line.
+   On phones (below 720px) it goes back under the title, because there is not enough room. */
+@media (min-width: 720px) {
+  .dashboard-page {
+    --top-bar-height: 6.5rem;
+    position: relative;
+  }
+  .logo-bar {
+    min-height: var(--top-bar-height);
+  }
+  .user-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--top-bar-height);
+    z-index: 5;
+    pointer-events: none;            /* the empty middle must not block the buttons beside the title */
+  }
+  .user-bar .menu-button,
+  .user-bar-right {
+    pointer-events: auto;            /* but the burger, the name and the color circle still work */
+  }
+}
+
+/* Left side of the bar: the menu button and the user's name */
+.user-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+/* The burger (menu) button */
+.menu-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.menu-button:hover {
+  border-color: var(--accent);
+}
+.menu-button {
+  position: relative;
+}
+/* The small number on the burger button (teacher: waiting retake requests) */
+.menu-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #d93025;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.tab-count {
+  display: inline-block;
+  min-width: 1.3rem;
+  margin-left: 0.35rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: #d93025;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* The Back button at the top of each screen: easy to see and easy to tap */
+.back-button {
+  margin-bottom: 1rem;
+  padding: 0.65rem 1.2rem;
+  font-weight: 600;
+}
+
+/* "Dashboard / Science / Basics" trail at the top of the content */
+.breadcrumbs {
+  margin-bottom: 1rem;
+  color: var(--muted);
+}
+
+/* A button that looks like a link (used in the breadcrumbs) */
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--link);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Normal links on the dashboard use the link color (buttons keep their own colors) */
+.dashboard-page a:not(.btn) {
+  color: var(--link);
+}
+
+/* ---------- 2. Cards, lists and rows ---------- */
+
+/* A white box that holds one section (a list, a form, the score...) */
+.card {
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Inputs and dropdowns fill the whole width of their box */
+input,
+select {
+  width: 100%;
+}
+
+/* A row of inputs and buttons (it wraps on small screens) */
+.action-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.action-row input {
+  flex: 1 1 200px;
+  width: auto;
+}
+.action-row .minutes-input {
+  flex: 0 0 90px;
+} /* the small "minutes" box */
+
+/* The list of subjects, categories or quizzes */
+/* On wide screens the items sit in columns (each at least 300px wide). On phones: one column. */
+.item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+/* A letter (A, B, C...) above the first name that starts with it, in the Teachers and Students tabs */
+.letter-heading {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin-top: 0.4rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-weight: 700;
+}
+.letter-heading:first-child {
+  margin-top: 0;
+}
+
+/* The students list (teacher): one column, scrolls when it is long.
+   It grows down to the bottom of the screen (screen height minus the header and the title),
+   but never gets shorter than 340px. A short list stays short. */
+.student-list {
+  grid-template-columns: 1fr;
+  max-height: max(340px, calc(100vh - 300px));
+  max-height: max(340px, calc(100dvh - 300px));
+  overflow-y: auto;
+}
+
+/* "See more" under the subjects on the dashboard (student): on the right side */
+.see-more-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.back-row {
+  margin-bottom: 1rem;
+}
+
+/* All the subjects of a student: 2 columns on phones, 3 on tablets, 5 on computers */
+.subject-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  .subject-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 960px) {
+  .subject-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+.subject-grid .list-item {
+  align-items: stretch;
+}
+.subject-grid .card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  overflow-wrap: anywhere;   /* long subject names wrap instead of pushing the card wider */
+}
+
+/* The small "Quiz" title is a link back to the dashboard */
+.logo-bar .logo[role="link"] {
+  cursor: pointer;
+}
+.logo-bar .logo[role="link"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Cards next to each other on wide screens (class code + students, add question + question list).
+   On phones they are stacked. */
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+}
+.card-grid .card {
+  margin-bottom: 0;
+}
+
+/* One item in that list: name on the left, buttons on the right */
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* Right side of the top bar: the color circle, then the user's name */
+.user-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+/* ----- The color circle and its box (theme.js) ----- */
+.theme-wrap {
+  position: relative;
+  flex: none;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--line);   /* the thin line:  name | circle */
+  display: flex;
+  align-items: center;
+}
+.theme-circle {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  /* inside = the background color, ring = the text color */
+  background: var(--circle-background, var(--paper));
+  border: 4px solid var(--circle-text, var(--ink));
+  box-shadow: 0 0 0 1px var(--line);
+}
+.theme-circle:hover,
+.theme-circle:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.theme-box {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;              /* opens towards the left, so it stays on the screen */
+  z-index: 40;
+  width: 290px;
+  max-width: calc(100vw - 2rem);
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.theme-title {
+  font-weight: 700;
+}
+.theme-presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));   /* 12 presets: two columns, each with its name */
+  gap: 0.4rem 0.5rem;
+}
+.theme-preset-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.2rem 0.3rem;
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  cursor: pointer;
+}
+.theme-preset-item:hover,
+.theme-preset-item:focus-visible {
+  background: var(--line);
+}
+.theme-preset {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  border: 3px solid;
+}
+.theme-preset-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.theme-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+.theme-row input[type="color"] {
+  width: 52px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+}
+.theme-warning {
+  font-size: 0.85rem;
+  color: #d93025;
+}
+/* Inputs follow the chosen text color (otherwise a dark theme would show dark text on dark) */
+.dashboard-page input,
+.dashboard-page select,
+.dashboard-page textarea {
+  color: var(--ink);
+}
+
+/* The user's name on the right side of the top bar (opposite the burger button) */
+.user-bar-name {
+  min-width: 0;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.user-bar-name .muted {
+  font-weight: 400;
+  text-transform: capitalize;
+}
+/* The student's section, on its own line under the name, written the same way: "BSIT 2-1 (section)" */
+.user-bar-section {
+  display: block;
+}
+
+/* ----- Clickable cards: the whole card opens when you press it (no "Open" button) -----
+   The invisible button .card-main is stretched over the whole card (see ::after). */
+.list-item {
+  position: relative;
+}
+.list-item.clickable {
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.list-item.clickable:hover,
+.list-item.clickable:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.card-main,
+.card-static {
+  display: grid;
+  gap: 0.15rem;
+  flex: 1 1 160px;
+  min-width: 0;
+  text-align: left;
+}
+.card-main {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.card-main::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+}
+.card-main:focus-visible {
+  outline: none;
+}
+.list-item.clickable:has(.card-main:focus-visible) {
+  outline: 2px solid var(--accent);
+}
+.list-item .action-row {
+  position: relative;
+  z-index: 1;   /* above the stretched button, so the three dots and Take quiz still work */
+}
+/* The retake button (student): its own line, in the middle of the card */
+.list-item .item-center {
+  flex-basis: 100%;
+  justify-content: center;
+}
+.card-arrow {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--muted);
+}
+
+/* ----- Three dots menu (Edit / Delete) ----- */
+.item-menu-wrap {
+  position: relative;
+}
+.dots-button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--muted);
+  cursor: pointer;
+}
+.dots-button:hover,
+.dots-button[aria-expanded="true"] {
+  background: var(--paper);
+  border-color: var(--line);
+  color: var(--ink);
+}
+.item-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  min-width: 130px;
+  padding: 0.3rem;
+  display: grid;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.item-menu[hidden] {
+  display: none;
+}
+.item-menu.open-up {            /* near the bottom: the menu opens upward */
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+.item-menu button {
+  text-align: left;
+  padding: 0.5rem 0.7rem;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.item-menu button:hover {
+  background: var(--paper);
+}
+.item-menu .danger {
+  color: #b91c1c;
+}
+@media (prefers-color-scheme: dark) {
+  .item-menu .danger {
+    color: #f87171;
+  }
+}
+
+/* ----- Labeled fields (new subject / category / quiz, and the edit box) ----- */
+.field {
+  display: grid;
+  gap: 0.3rem;
+}
+.field[hidden] {
+  display: none;
+}
+.field small {
+  font-size: 0.85rem;
+}
+.add-item-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+.add-item-row .field:first-child {
+  flex: 1 1 220px;
+}
+.add-item-row .field:nth-child(2):not(.field-small) {
+  flex: 1 1 160px;   /* the Section box (subjects only) */
+}
+.add-item-row .field-small {
+  flex: 0 0 130px;
+}
+.edit-form {
+  display: grid;
+  gap: 1rem;
+}
+/* The Save and Cancel buttons of the edit box sit in the middle, same as in the "Are you sure?" box */
+.edit-form .action-row {
+  justify-content: center;
+  gap: 1.25rem;
+}
+.edit-form .action-row .btn {
+  min-width: 7.5rem;
+}
+
+/* ----- The questions list (teacher) ----- */
+.question-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.question-item {
+  gap: 0.6rem;
+}
+.question-number {
+  flex: 0 0 auto;
+  font-weight: 700;
+  min-width: 1.6rem;
+}
+.question-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* The highlight goes around the WHOLE row, including the number ("1.") */
+.question-item.editing {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: var(--radius);
+}
+
+/* ----- Retake requests ----- */
+.retake-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.retake-item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+/* "See more" link under a list in the menu */
+.see-more {
+  margin-top: 0.4rem;
+}
+
+/* A numbered list (the questions of a quiz) */
+.numbered-list {
+  list-style: none;      /* the number is drawn inside each row (see .question-number) so the highlight can include it */
+  margin: 0;
+  padding: 0 0 0 0.5rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* Wide tables scroll sideways instead of breaking the page */
+.table-scroll {
+  overflow-x: auto;
+}
+
+/* A list that scrolls up and down after 5 rows (the questions, the student results), on phones too.
+   app.js sets the exact max-height (limitListHeights), so only the first 5 rows show. */
+.scroll-box {
+  position: relative;            /* the rows measure their position from this box */
+  overflow-y: auto;
+  padding: 6px 0.5rem 6px 0;     /* room for the highlight of the question being edited and for the scrollbar */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll.scroll-box {
+  overflow-x: auto;
+  padding: 0;
+}
+
+/* The table of student results: roomy cells, header stays on top while scrolling */
+.results-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+}
+.results-table th,
+.results-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.results-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.results-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.results-table td:last-child,
+.results-table th:last-child {
+  text-align: right;
+}
+
+/* The section line under a subject's name (Subject / Section / counts) */
+.item-section {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* The " | " between the counts on a teacher's subject / category / quiz card */
+.item-sep {
+  margin: 0 0.3rem;
+  opacity: 0.6;
+}
+
+/* ---------- 3. Messages and score ---------- */
+
+/* A line of text for feedback. Add "error" to make it red. */
+.message {
+  min-height: 1.25rem;
+  font-weight: 600;
+}
+.message.error {
+  color: #b91c1c;
+}
+
+/* The big score number, like "8 / 10" */
+.score-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .message.error {
+    color: #f87171;
+  }
+}
+
+/* ---------- 4. Taking a quiz ---------- */
+
+/* The quiz screen and the score screen stay in the middle, so the lines are easy to read */
+.quiz-attempt {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.quiz-result {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* The whole quiz screen. Text cannot be selected, so it is harder to copy. */
+.quiz-attempt,
+.quiz-attempt * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Quiz name (left) and countdown timer (right) */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* "Question 2 of 5" */
+.question-counter {
+  font-weight: 600;
+}
+
+/* One question with its choices */
+.quiz-attempt fieldset {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.quiz-attempt legend {
+  font-weight: 600;
+  padding: 0 0.4rem;
+}
+
+/* One choice: the radio button and its text */
+.answer-option {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  font-weight: 400;
+  margin: 0;
+  cursor: pointer;
+}
+.answer-option input {
+  width: auto;
+}
+
+/* ---------- 5. Joining a class and the class code ---------- */
+
+/* The join screen: a student types the teacher's class code here */
+.join-class {
+  max-width: 560px;
+  margin: 1rem auto;
+  text-align: center;
+  justify-items: center;
+  padding: 2rem 1.5rem;
+}
+.join-class .action-row {
+  justify-content: center;
+  width: 100%;
+}
+.join-class .code-input {
+  flex: 0 1 220px;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+/* The teacher's class code card: the code is big so it is easy to read out loud */
+/* Big numbers on the admin overview card */
+.stat-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.class-code {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+/* ---------- 6. Side menu (drawer) ---------- */
+
+/* The dark layer behind the menu. Click it to close the menu. */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* While the menu is open the page behind it cannot scroll (app.js: lockPageScroll) */
+html.drawer-open,
+html.drawer-open body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.drawer-backdrop {
+  touch-action: none;            /* a swipe on the dark layer does not scroll the page */
+  overscroll-behavior: contain;
+}
+
+/* The menu itself: slides in from the left */
+.side-drawer {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 41;
+  width: min(320px, 85vw);
+  padding: 1.25rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;   /* reaching the end of the menu does not scroll the page */
+  background: var(--surface);
+  color: var(--ink);
+  border-right: 1px solid var(--line);
+  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.25);
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition:
+    transform 0.25s ease,
+    visibility 0.25s;
+}
+.side-drawer.open {
+  transform: none;
+  visibility: visible;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+#drawer-content {
+  flex: 1;
+}
+
+/* Bottom of the menu: the user's name and the Sign out button */
+.drawer-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+.drawer-footer .btn {
+  width: 100%;
+}
+.drawer-user {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.drawer-user .muted {
+  font-weight: 400;
+  text-transform: capitalize;
+}
+.side-drawer h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* Lists inside the menu (subjects and classmates) */
+.drawer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.drawer-list button {
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  cursor: pointer;
+}
+.drawer-list button:hover {
+  border-color: var(--accent);
+}
+.drawer-list button[aria-current="page"] {
+  border-color: var(--accent);
+  font-weight: 700;
+} /* the tab you are on (Dashboard, Teachers, Students) */
+/* The "Requests" group in the teacher's menu: a title with its two tabs indented under it */
+.drawer-group-label {
+  margin: 0.4rem 0 0.4rem 0.25rem;
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.drawer-sublist {
+  margin-left: 0.75rem;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--line);
+}
+.drawer-list .classmate {
+  padding: 0.35rem 0.25rem;
+} /* a classmate's name (no button) */
+
+@media (prefers-reduced-motion: reduce) {
+  .side-drawer {
+    transition: none;
+  }
+}
+
+/* ---------- 7. Floating rules box (modal) ---------- */
+
+/* The dark layer behind the box. It centers the box on the screen. */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* The box that floats in the center */
+.modal-box {
+  width: min(480px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: modal-pop 0.2s ease-out;
+}
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal-box {
+    animation: none;
+  }
+}
+
+/* Tried to click outside the box: it shakes, to say "press one of the buttons" */
+.modal-box.shake {
+  animation: modal-shake 0.35s ease-in-out;
+}
+@keyframes modal-shake {
+  0%, 100% { transform: none; }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal-box.shake {
+    animation: none;
+  }
+}
+
+/* The title is in the middle */
+.modal-box h2 {
+  text-align: center;
+}
+
+/* The small "Are you sure?" box (sign out) */
+.confirm-box {
+  width: min(400px, 100%);
+  padding: 2rem 1.75rem;
+  gap: 1.5rem;                /* more space between the title, the question and the buttons */
+  text-align: center;
+}
+.confirm-backdrop {
+  z-index: 70;       /* above the side menu, which is still open behind it */
+}
+.confirm-message {
+  margin: 0;
+  color: var(--muted);
+}
+.confirm-actions {
+  display: flex;
+  gap: 1.25rem;               /* space between Cancel and Sign out */
+  justify-content: center;    /* both buttons in the middle of the box */
+}
+.confirm-actions .btn {
+  min-width: 7.5rem;
+}
+
+/* The list of rules */
+.rules-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+/* A solid red button (used for "Deny" on a retake request) */
+.btn.deny {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+.btn.deny:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  filter: none;
+}
+
+/* A button with a red border (used for "Don’t show again") */
+.btn.red-border {
+  border: 2px solid #dc2626;
+}
+.btn.red-border:hover {
+  background: rgba(220, 38, 38, 0.1);
+}
+@media (prefers-color-scheme: dark) {
+  .btn.red-border {
+    border-color: #f87171;
+  }
+}
+
+/* ---------- 8. Toast (pop-up messages) ---------- */
+/* Made by toast.js. Computers and tablets: top center. Phones: bottom right (see the phone rule below). */
+
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: grid;
+  gap: 0.5rem;
+  width: min(380px, 92vw);
+}
+.toast {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.toast.toast-error {
+  background: rgba(185, 28, 28, 0.88);
+} /* red */
+.toast.toast-success {
+  background: rgba(21, 128, 61, 0.88);
+} /* green */
+
+/* A toast that just appeared (or changed its message) slides in */
+.toast.toast-new {
+  animation: toast-slide-in 0.3s ease-out;
+}
+/* The same message again: the toast shakes left and right */
+.toast.toast-shake {
+  animation: toast-shake 0.45s ease-in-out;
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toast-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toast-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-10px);
+  }
+  30% {
+    transform: translateX(9px);
+  }
+  45% {
+    transform: translateX(-7px);
+  }
+  60% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+}
+
+/* Phones: the toast goes to the bottom right and slides in from below */
+@media (max-width: 720px) {
+  .toast-container {
+    top: auto;
+    bottom: 1rem;
+    left: auto;
+    right: 1rem;
+    transform: none;
+  }
+  .toast.toast-new {
+    animation-name: toast-slide-up;
+  }
+}
+
+/* People who turned off animations get no movement */
+@media (prefers-reduced-motion: reduce) {
+  .toast.toast-new,
+  .toast.toast-shake {
+    animation: none;
+  }
+}
+
+/* ---------- 9. Logo (typing + 3D text) ---------- */
+
+/* The box that holds the logo */
+.logo {
+  display: grid;
+  justify-items: center;
+  margin: 0 auto 1.5rem;
+}
+.logo.logo-small {
+  margin: 0;
+} /* the small version on the dashboard */
+
+/* The logo text.
+   Change the look here:
+     font-size ......... how big the letters are
+     --logo-depth ...... how thick the 3D effect is (bigger = deeper)
+     --logo-side-color . color of the 3D side of the letters
+     --logo-drop-shadow  color of the soft shadow under the letters */
+.logo-text {
+  --logo-depth: 0.012em;
+  --logo-side-color: #8a8f98;   /* fallback for old browsers */
+  --logo-side-color: var(--logo-shadow, color-mix(in srgb, var(--ink) 45%, var(--paper)));   /* --logo-shadow = the "Title shadow" color from the color circle (theme.js). If nobody picked one: a gray between the text and the background, so the 3D side shows in every color theme */
+  --logo-drop-shadow: rgba(0, 0, 0, 0.45);
+
+  display: inline-grid;
+  max-width: 100%;
+  white-space: nowrap;
+  font-family: "Fredoka", "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  font-size: 6.5rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  color: var(--ink);
+
+  /* 3D effect: 10 copies of the text, each moved a little more down-right,
+     make the "side" of the letters. The last shadow is the soft drop shadow. */
+  text-shadow:
+    calc(var(--logo-depth) * 1) calc(var(--logo-depth) * 1) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 2) calc(var(--logo-depth) * 2) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 3) calc(var(--logo-depth) * 3) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 4) calc(var(--logo-depth) * 4) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 5) calc(var(--logo-depth) * 5) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 6) calc(var(--logo-depth) * 6) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 7) calc(var(--logo-depth) * 7) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 8) calc(var(--logo-depth) * 8) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 9) calc(var(--logo-depth) * 9) 0
+      var(--logo-side-color),
+    calc(var(--logo-depth) * 10) calc(var(--logo-depth) * 10) 0
+      var(--logo-side-color),
+    0.16em 0.18em 0.12em var(--logo-drop-shadow);
+}
+
+/* Smaller logo on the dashboard */
+.logo.logo-small .logo-text {
+  font-size: 3.2rem;
+}
+
+/* Dark mode: a stronger soft shadow (the side color already follows the theme colors above) */
+@media (prefers-color-scheme: dark) {
+  .logo-text {
+    --logo-drop-shadow: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* The two layers made by logo.js (see logo.js) stack in the same spot */
+.logo-text .logo-hidden,
+.logo-text .logo-typed {
+  grid-area: 1 / 1;
+}
+.logo-text .logo-hidden {
+  visibility: hidden;
+} /* invisible: only keeps the width fixed */
+.logo-text .logo-typed {
+  position: relative;
+  justify-self: start;
+  min-height: 1.2em;
+}
+
+/* The blinking cursor after the typed letters */
+.logo-text .logo-typed::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.07em;
+  height: 0.8em;
+  margin-left: 0.05em;
+  background: currentColor;
+  animation: cursor-blink 1s steps(1) infinite;
+}
+.logo-text .logo-typed.no-cursor::after {
+  display: none;
+}
+
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* People who turned off animations get a steady cursor */
+@media (prefers-reduced-motion: reduce) {
+  .logo-text .logo-typed::after {
+    animation: none;
+  }
+}
+
+
+/* ---------- Chat: Messages between students and teachers (chat.js) ---------- */
+
+/* Student menu: the Messages button sits above the teacher, subjects and classmates */
+.chat-menu {
+  margin-bottom: 0.75rem;
+}
+
+/* One box with two sides: the people on the left, the conversation on the right.
+   Like the students list, it grows down to the bottom of the screen but never gets shorter than 360px. */
+.chat-shell {
+  display: grid;
+  grid-template-columns: minmax(200px, 300px) 1fr;
+  height: max(360px, calc(100vh - 340px));
+  height: max(360px, calc(100dvh - 340px));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+/* Only one person to chat with: no list, just the conversation */
+.chat-shell.chat-single {
+  grid-template-columns: 1fr;
+}
+.chat-shell.chat-single .chat-people {
+  display: none;
+}
+
+/* The people */
+.chat-people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+}
+.chat-person {
+  width: 100%;
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.7rem 0.85rem;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-left: 3px solid transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.chat-person:hover,
+.chat-person[aria-current="true"] {
+  background: var(--paper);
+}
+.chat-person[aria-current="true"] {
+  border-left-color: var(--accent);
+}
+.chat-person-top,
+.chat-person-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.chat-person-time {
+  flex: none;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.chat-person-preview {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* The conversation. min-height: 0 lets the messages scroll inside the box instead of growing it. */
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.chat-placeholder {
+  margin: auto;
+  padding: 1rem;
+  text-align: center;
+}
+.chat-thread-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+.chat-back {
+  display: none;               /* only on a phone (see below) */
+  padding: 0.3rem 0.8rem;
+}
+.chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem;
+}
+.chat-empty {
+  margin: auto;
+  text-align: center;
+}
+.chat-day {
+  align-self: center;
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.chat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-width: 80%;
+}
+.chat-row.mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.chat-row.theirs {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+.chat-bubble {
+  padding: 0.5rem 0.8rem;
+  border-radius: 14px;
+  white-space: pre-wrap;       /* keeps the new lines the person typed */
+  overflow-wrap: anywhere;     /* a very long word never breaks the layout */
+}
+.chat-row.mine .chat-bubble {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-bottom-right-radius: 4px;
+}
+.chat-row.theirs .chat-bubble {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-bottom-left-radius: 4px;
+}
+.chat-time {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+/* The box to type in and the Send button */
+.chat-compose {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border-top: 1px solid var(--line);
+}
+.chat-compose textarea {
+  flex: 1;
+  min-width: 0;
+  max-height: 120px;
+  padding: 0.55rem 0.75rem;
+  resize: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+/* Phone: one side at a time. The list first, then the conversation with a Back button. */
+@media (max-width: 719px) {
+  .chat-shell {
+    grid-template-columns: 1fr;
+  }
+  .chat-shell[data-open="false"] .chat-thread {
+    display: none;
+  }
+  .chat-shell[data-open="true"] .chat-people {
+    display: none;
+  }
+  .chat-back {
+    display: inline-block;
+  }
+  .chat-shell.chat-single .chat-back {
+    display: none;
+  }
+  .chat-row {
+    max-width: 90%;
+  }
+}
+
+
+/* ---------- Chat: role tag, message options (three dots), reactions, reply, forward, report ---------- */
+
+/* "Teacher" / "Classmate" next to a name in the list of people */
+.chat-role {
+  margin-left: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* One message = the three dots + the bubble on one line (dots on the inner side of the bubble) */
+.chat-line {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  max-width: 100%;
+}
+.chat-row.mine .chat-line {
+  flex-direction: row;           /* dots on the left of my bubble */
+}
+.chat-row.theirs .chat-line {
+  flex-direction: row-reverse;   /* dots on the right of their bubble */
+}
+.chat-line .chat-bubble {
+  min-width: 0;
+  -webkit-touch-callout: none;   /* iPhone: no own menu on a long press */
+}
+.chat-dots {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.chat-row:hover .chat-dots,
+.chat-dots:focus-visible,
+.chat-dots[aria-expanded="true"] {
+  opacity: 1;
+}
+.chat-dots:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+/* A phone has no hover: the dots are always there, and a long press must not select the text */
+@media (hover: none) {
+  .chat-dots {
+    opacity: 0.7;
+  }
+  .chat-line .chat-bubble {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Unsent / removed message */
+.chat-bubble.unsent {
+  background: none !important;
+  border: 1px dashed var(--line) !important;
+  color: var(--muted) !important;
+  font-style: italic;
+}
+
+/* "Forwarded" label and the quote of the message that was answered, inside the bubble */
+.chat-forwarded {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.72rem;
+  font-style: italic;
+  opacity: 0.8;
+}
+.chat-quote {
+  display: grid;
+  gap: 0.1rem;
+  width: 100%;
+  margin: 0 0 0.35rem;
+  padding: 0.3rem 0.55rem;
+  text-align: left;
+  font: inherit;
+  font-size: 0.82rem;
+  color: inherit;
+  background: rgba(127, 127, 127, 0.16);
+  border: 0;
+  border-left: 3px solid currentColor;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.chat-quote strong,
+.chat-quote span {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.chat-quote span {
+  opacity: 0.85;
+}
+.chat-quote.gone span {
+  font-style: italic;
+}
+
+/* The emojis under a message */
+.chat-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;     /* the emojis sit on the RIGHT side, under the bubble */
+  align-self: flex-end;
+  gap: 0.25rem;
+  margin-top: -0.1rem;
+}
+.chat-reaction {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.05rem 0.4rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.chat-reaction.mine {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.chat-reaction-count {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* A message that was jumped to flashes once */
+.chat-row.flash .chat-bubble {
+  animation: chat-flash 1.4s ease-out;
+}
+@keyframes chat-flash {
+  0%, 40% { box-shadow: 0 0 0 3px var(--accent); }
+  100%    { box-shadow: 0 0 0 3px transparent; }
+}
+
+/* "Replying to ..." above the typing box */
+.chat-reply-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+.chat-reply-bar[hidden] {
+  display: none;
+}
+.chat-reply-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  padding-left: 0.5rem;
+  border-left: 3px solid var(--accent);
+  font-size: 0.82rem;
+}
+.chat-reply-text strong,
+.chat-reply-text span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.chat-reply-text span {
+  color: var(--muted);
+}
+.chat-icon-btn {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.chat-icon-btn:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
+/* The floating layer: menus and boxes above everything (the side menu is 70) */
+#chat-layer .chat-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+}
+#chat-layer .chat-backdrop.dim {
+  background: rgba(0, 0, 0, 0.45);
+}
+.chat-pop {
+  position: fixed;
+  z-index: 81;
+  display: flex;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.chat-menu-pop {
+  flex-direction: column;
+  min-width: 150px;
+  padding: 0.3rem;
+}
+.chat-pop-item {
+  padding: 0.55rem 0.8rem;
+  text-align: left;
+  font: inherit;
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+}
+.chat-pop-item:hover,
+.chat-pop-item:focus-visible {
+  background: var(--paper);
+}
+.chat-pop-item.danger {
+  color: #c0392b;
+}
+.chat-reactbar {
+  gap: 0.1rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 999px;
+}
+.chat-emoji {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.chat-emoji:hover,
+.chat-emoji:focus-visible {
+  background: var(--paper);
+  transform: scale(1.2);
+}
+.chat-emoji.mine {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* Forward and Report boxes: in the middle on a computer, at the bottom on a phone */
+.chat-sheet {
+  position: fixed;
+  z-index: 81;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, calc(100vw - 2rem));
+  max-height: min(80vh, 560px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+.chat-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+.chat-sheet-body {
+  padding: 0.7rem 0.85rem 0.85rem;
+  overflow-y: auto;
+}
+.chat-sheet-preview {
+  margin: 0 0 0.6rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.88rem;
+  background: var(--paper);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+.chat-pick-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.chat-pick {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  font: inherit;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  cursor: pointer;
+}
+.chat-pick:hover,
+.chat-pick:focus-visible {
+  background: var(--paper);
+}
+@media (max-width: 719px) {
+  .chat-sheet {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    max-height: 75vh;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+}
+
+/* A report card in the admin's Reports tab */
+.report-card {
+  display: grid;
+  gap: 0.4rem;
+  width: 100%;
+}
+.report-card p {
+  margin: 0;
+}
+.report-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.report-text {
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  background: var(--paper);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-row.flash .chat-bubble { animation: none; }
+  .chat-emoji { transition: none; }
+}
+
+
+/* ---------- Score colors (see getScoreClass in app.js) ----------
+   red = 74% and below, orange = 75% to 85%, green = 86% to 100% */
+.score-low  { --score-color: #dc2626; }
+.score-mid  { --score-color: #ea580c; }
+.score-high { --score-color: #16a34a; }
+@media (prefers-color-scheme: dark) {
+  .score-low  { --score-color: #f87171; }
+  .score-mid  { --score-color: #fb923c; }
+  .score-high { --score-color: #4ade80; }
+}
+.score-low,
+.score-mid,
+.score-high {
+  color: var(--score-color);
+}
+.badge.score-low,
+.badge.score-mid,
+.badge.score-high {
+  border-color: var(--score-color);
+  color: var(--score-color);
+  background: color-mix(in srgb, var(--score-color) 12%, transparent);
+  font-weight: 600;
+}

@@ -1,0 +1,256 @@
+<!doctype html>
+<!--
+  dashboard.html  -  The page after sign in.
+  It is almost empty on purpose: app.js builds everything inside #main-content,
+  and fills the side menu (#drawer-content).
+  Styles:  quiz.css
+  Scripts: utils.js (escapeHtml), db.js (data), toast.js (pop-up messages), site.config.js (your settings), logo.js (the title), theme.js (color circle), chat.js (messages between student and teacher), site-links.js (buttons beside the title), app.js (the dashboard itself)
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard | Quiz App</title>
+
+    <!-- Font for the logo (Fredoka) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Shared styles first, then the quiz app styles -->
+    <link rel="stylesheet" href="../../shared/css/reset.css" />
+    <link rel="stylesheet" href="../../shared/css/variable.css" />
+    <link rel="stylesheet" href="../../shared/css/components.css" />
+    <link rel="stylesheet" href="quiz.css" />
+  </head>
+  <body class="dashboard-page">
+    <!-- Small 3D title. data-logo="static" = no typing, the full title just stays (see logo.js).
+       To bring the typing back, change it to just: data-logo -->
+    <header class="logo-bar">
+      <div class="logo logo-small" role="img" aria-label="Quiz">
+        <span class="logo-text" data-logo="static" aria-hidden="true"
+          >Quiz</span
+        >
+      </div>
+      <!-- Buttons and links beside the title. Written in site.config.js, drawn by site-links.js -->
+      <nav class="site-links" id="site-links" aria-label="Site links" hidden></nav>
+    </header>
+
+    <!-- Top bar: only the menu (burger) button. The user's name and Sign out are inside the menu. -->
+    <div class="user-bar">
+      <div class="user-bar-left">
+        <!-- Everybody (admin, teacher, student) has this button (app.js shows it). It opens the side menu below. -->
+        <button
+          type="button"
+          class="menu-button"
+          id="menu-button"
+          aria-label="Open menu"
+          aria-controls="side-drawer"
+          aria-expanded="false"
+          hidden
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <!-- Right side: the user's name (app.js fills it), a thin line, then the color circle.
+           The circle opens a small box to pick the background, text, button and link colors (theme.js). -->
+      <div class="user-bar-right">
+        <span class="user-bar-name" id="user-bar-name"></span>
+        <div class="theme-wrap">
+          <button type="button" class="theme-circle" id="theme-button"
+                  aria-label="Change colors" aria-haspopup="dialog" aria-expanded="false"></button>
+          <div class="theme-box" id="theme-box" role="dialog" aria-label="Colors" hidden>
+            <p class="theme-title">Colors</p>
+            <div class="theme-presets" id="theme-presets"></div>
+            <label class="theme-row" for="theme-background">
+              <span>Background</span>
+              <input type="color" id="theme-background" value="#f4f6f8">
+            </label>
+            <label class="theme-row" for="theme-text">
+              <span>Text</span>
+              <input type="color" id="theme-text" value="#16222e">
+            </label>
+            <label class="theme-row" for="theme-button-color">
+              <span>Buttons</span>
+              <input type="color" id="theme-button-color" value="#0f766e">
+            </label>
+            <label class="theme-row" for="theme-link">
+              <span>Links</span>
+              <input type="color" id="theme-link" value="#0f766e">
+            </label>
+            <label class="theme-row" for="theme-shadow">
+              <span>Title shadow</span>
+              <input type="color" id="theme-shadow" value="#8a8f98">
+            </label>
+            <p class="theme-warning" id="theme-warning" hidden>These two colors are hard to read together.</p>
+            <button type="button" class="btn ghost theme-reset" id="theme-reset">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- app.js draws the lists, forms and quiz here -->
+    <main class="dashboard-main" id="main-content"></main>
+
+    <!-- Very bottom of the page: students can open the rules again from here -->
+    <footer class="page-footer">
+      <button type="button" class="link-button" id="show-rules-button" hidden>
+        View quiz rules
+      </button>
+    </footer>
+
+    <!-- SIDE MENU. Slides in from the left. app.js fills #drawer-content:
+         student = Messages, teacher, subjects, classmates
+         teacher = Dashboard, Requests, Students, Messages
+         admin   = Dashboard, Teachers, Students
+         At the bottom: the user's name and the Sign out button. -->
+    <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+    <aside
+      class="side-drawer"
+      id="side-drawer"
+      aria-label="Menu"
+      aria-hidden="true"
+      inert
+    >
+      <div class="drawer-header">
+        <h2 id="drawer-title">Menu</h2>
+        <button
+          type="button"
+          class="btn ghost"
+          id="drawer-close-button"
+          aria-label="Close menu"
+        >
+          &#10005;
+        </button>
+      </div>
+      <div id="drawer-content"></div>
+      <div class="drawer-footer">
+        <p class="drawer-user" id="user-name-label"></p>
+        <button type="button" class="btn ghost" id="sign-out-button">
+          Sign out
+        </button>
+      </div>
+    </aside>
+
+    <!-- QUIZ RULES. A box that floats in the center. Students see it when they open the
+       dashboard, until they press "Don't show again". It only closes with the two buttons
+       (clicking outside the box or pressing Escape does NOT close it). To change the rules, edit the <li> lines. -->
+    <div class="modal-backdrop" id="rules-modal" hidden>
+      <div
+        class="modal-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rules-title"
+      >
+        <h2 id="rules-title">Quiz rules</h2>
+        <ul class="rules-list">
+          <li>You answer <strong>one question at a time</strong>.</li>
+          <li>
+            Pick an answer and the <strong>Next</strong> button will appear. You
+            can change your answer until you press Next.
+          </li>
+          <li>You cannot go back to a previous question.</li>
+          <li>You can take each quiz <strong>only once</strong>.</li>
+          <li>
+            <strong>Do not leave the tab.</strong> If you do, your quiz is
+            cancelled and you must start again.
+          </li>
+          <li>Copy, paste and right-click are disabled.</li>
+          <li>When the time is up, your quiz is submitted automatically.</li>
+        </ul>
+        <div class="action-row">
+          <button type="button" class="btn" id="rules-ok-button">Got it</button>
+          <button
+            type="button"
+            class="btn ghost red-border"
+            id="rules-dont-show-button"
+          >
+            Don't show again
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT BOX (teacher). Opens from the three dots (Edit) of a subject, category or quiz.
+         app.js changes the title and shows the time field only for quizzes. -->
+    <div class="modal-backdrop" id="edit-modal" hidden>
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="edit-title">
+        <h2 id="edit-title">Edit</h2>
+        <form id="edit-form" class="edit-form" novalidate>
+          <div class="field">
+            <label for="edit-name" id="edit-name-label">Name</label>
+            <input id="edit-name" autocomplete="off">
+          </div>
+          <div class="field" id="edit-section-field" hidden>
+            <label for="edit-section">Sections</label>
+            <input id="edit-section" autocomplete="off" placeholder="e.g. BSIT 2-1, BSIT 2-2">
+            <small class="muted">Separate sections with a comma. Only these sections can join.</small>
+          </div>
+          <div class="field" id="edit-minutes-field" hidden>
+            <label for="edit-minutes">Time (minutes)</label>
+            <input id="edit-minutes" type="number" min="1">
+          </div>
+          <div class="field" id="edit-close-field" hidden>
+            <label for="edit-close">Close automatically at (optional)</label>
+            <input id="edit-close" type="datetime-local">
+            <small class="muted">Leave it empty to close the quiz yourself with Close quiz.</small>
+          </div>
+          <p id="edit-error" class="message error" role="alert"></p>
+          <div class="action-row">
+            <button type="submit" class="btn">Save</button>
+            <button type="button" class="btn ghost" id="edit-cancel-button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- CLOSE DATE BOX (teacher). Opens from the three dots of a quiz (Set close date).
+         The quiz closes by itself at that date and time. -->
+    <div class="modal-backdrop" id="close-modal" hidden>
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="close-title">
+        <h2 id="close-title">Close date</h2>
+        <form id="close-form" class="edit-form" novalidate>
+          <p class="muted" id="close-quiz-name"></p>
+          <div class="field">
+            <label for="close-date">Close automatically at</label>
+            <input id="close-date" type="datetime-local">
+            <small class="muted">From that moment students cannot start the quiz. A student who already started can still finish.</small>
+          </div>
+          <p id="close-error" class="message error" role="alert"></p>
+          <div class="action-row">
+            <button type="submit" class="btn">Save</button>
+            <button type="button" class="btn ghost" id="close-remove-button" hidden>Remove date</button>
+            <button type="button" class="btn ghost" id="close-cancel-button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order matters: the scripts at the top are used by the ones below them -->
+    <script src="../../shared/js/utils.js"></script>
+    <script src="site.config.js"></script>
+    <script src="db.js"></script>
+    <script src="toast.js"></script>
+    <script src="logo.js"></script>
+    <script src="theme.js"></script>
+    <script src="chat.js"></script>
+    <script src="app.js"></script>
+    <script src="site-links.js"></script>
+</body>
+</html>

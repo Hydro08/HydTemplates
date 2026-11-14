@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hyd Templates</title>
+  <link rel="stylesheet" href="shared/css/reset.css">
+  <link rel="stylesheet" href="shared/css/variable.css">
+  <link rel="stylesheet" href="shared/css/components.css">
+  <link rel="stylesheet" href="dashboard/css/dashboard.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Hyd Templates</h1>
+    <p class="muted">Ready-to-use website templates for school projects.</p>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Search template" aria-label="Search template">
+      <select id="typeFilter" aria-label="Filter by type">
+        <option value="all">All types</option>
+      </select>
+      <select id="backendFilter" aria-label="Filter by backend">
+        <option value="all">Any backend</option>
+      </select>
+    </div>
+
+    <p id="count" class="muted" aria-live="polite"></p>
+    <section id="templateGrid" class="grid"></section>
+  </main>
+
+  <dialog id="backendDialog">
+    <h2>Choose a backend</h2>
+    <p class="muted" id="dialogTemplateName"></p>
+    <div id="backendOptions" class="options"></div>
+    <p id="dialogMessage" class="muted" role="status"></p>
+    <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+  </dialog>
+
+  <script src="shared/js/utils.js"></script>
+  <script src="dashboard/js/filter.js"></script>
+  <script src="dashboard/js/main.js"></script>
+</body>
+</html>

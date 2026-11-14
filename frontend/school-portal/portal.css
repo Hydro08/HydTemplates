@@ -1,0 +1,188 @@
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: .9rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.brand { font-weight: 700; text-decoration: none; margin-right: auto; }
+.user { display: flex; align-items: center; gap: .75rem; }
+.user .btn { padding: .4rem .9rem; }
+
+.block { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem; }
+.block h1 { font-size: clamp(1.6rem, 5vw, 2.25rem); }
+.block h2 { margin-bottom: 1rem; }
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--gap);
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; min-width: 480px; }
+th, td { text-align: left; padding: .65rem .9rem; border-bottom: 1px solid var(--line); }
+tbody tr:last-child td { border-bottom: 0; }
+
+/* On desktop the subject looks like plain text (not a button) */
+.subject-toggle {
+  all: unset;
+  display: block;
+  pointer-events: none;
+}
+.subject-toggle::after { content: none; }
+
+.site-footer { padding: 2rem 1.25rem; text-align: center; }
+
+/* Change password */
+.pw-card { display: grid; gap: .4rem; max-width: 460px; padding: 1.25rem; }
+.pw-card h3 { margin-bottom: .1rem; }
+.pw-card label { font-weight: 600; margin-top: .6rem; }
+.pw-card input[type="password"], .pw-card input[type="text"] { width: 100%; }
+.pw-card input[aria-invalid="true"] { border-color: #dc2626; box-shadow: 0 0 0 1px #dc2626; }
+.pw-card .check { display: flex; align-items: center; gap: .5rem; font-weight: 400; margin-top: .75rem; }
+.pw-card .check input { width: auto; padding: 0; }
+.pw-card .btn { margin-top: .75rem; justify-self: start; }
+.form-msg { min-height: 1.4em; margin-top: .5rem; font-size: .95rem; }
+.form-msg.error { color: #dc2626; }
+.form-msg.ok { color: var(--accent); }
+
+.pw-rules { list-style: none; margin: .1rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .25rem 1.1rem; font-size: .85rem; color: var(--muted); }
+.pw-rules li::before { content: "○ "; }
+.pw-rules li.ok { color: var(--accent); }
+.pw-rules li.ok::before { content: "✓ "; }
+
+/* Phone: the header has two rows, and the schedule is a list of subjects; tap one to see its details */
+@media (max-width: 640px) {
+  .site-header {
+    gap: .5rem 1rem;
+    padding: .75rem 1rem;
+  }
+  #userName { display: none; } /* the name is already in "Welcome" */
+
+  .block { padding: 1.5rem 1rem; }
+
+  .table-wrap { border: 0; background: none; overflow: visible; }
+  table, tbody, tr, td { display: block; }
+  table { min-width: 0; }
+  thead { /* hidden visually but still readable by screen readers */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  tr {
+    margin-bottom: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .6rem .9rem;
+    text-align: right;
+    border-bottom: 1px solid var(--line);
+  }
+  td:last-child { border-bottom: 0; }
+  td::before {
+    content: attr(data-label);
+    flex: none;
+    color: var(--muted);
+    text-align: left;
+  }
+
+  /* Only the subject is always visible; the details stay hidden until tapped */
+  td.detail { display: none; }
+  tr.open td.detail { display: flex; }
+
+  td[data-label="Subject"] { padding: 0; border-bottom: 0; }
+  td[data-label="Subject"]::before { content: none; }
+  tr.open td[data-label="Subject"] { border-bottom: 1px solid var(--line); }
+
+  .subject-toggle {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .9rem .9rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .subject-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: var(--radius); }
+  .subject-toggle:active { background: var(--paper); }
+  .subject-toggle::after {
+    content: "";
+    flex: none;
+    width: .55rem;
+    height: .55rem;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg);
+    margin-right: .25rem;
+    transition: transform .2s;
+  }
+  tr.open .subject-toggle::after { transform: rotate(-135deg); }
+}
+
+/* Views (Dashboard, Enrollment, ...) */
+.view[hidden] { display: none; }
+.sub-h { margin-top: 1.75rem; }
+.enroll-card { margin-top: 1rem; }
+.enroll-top { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
+.enroll-top > div { display: grid; gap: .15rem; justify-items: start; }
+.enroll-card strong { font-size: 1.15rem; }
+.cards h3 .badge { margin-left: .4rem; vertical-align: middle; }
+
+.events { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: var(--gap); }
+.event { display: flex; align-items: center; gap: 1rem; padding: .9rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.event-date { flex: none; display: grid; place-items: center; width: 56px; padding: .35rem 0; border-radius: 8px; background: var(--paper); border: 1px solid var(--line); line-height: 1.1; }
+.event-date span { font-size: .75rem; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.event-date strong { font-size: 1.35rem; }
+
+/* Calendar (portal.html #calendar) */
+.cal { margin-top: 1rem; }
+.cal-head { display: flex; align-items: center; gap: .5rem; margin-bottom: .75rem; }
+.cal-head h2 { flex: 1; margin: 0; text-align: center; font-size: 1.15rem; }
+.cal-head .btn { margin: 0; padding: .3rem .8rem; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.cal-dow { text-align: center; font-size: .8rem; font-weight: 700; color: var(--muted); padding: .25rem 0; }
+.cal-day {
+  position: relative; display: flex; align-items: flex-start; justify-content: flex-start;
+  aspect-ratio: 1 / .85; min-height: 44px; padding: .35rem .45rem;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius);
+  font: inherit; cursor: pointer;
+}
+.cal-day:hover, .cal-day:focus-visible { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: -2px; }
+.cal-day.today { border-color: var(--accent); font-weight: 700; }
+.cal-day.today span { background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 0 .45rem; }
+.cal-day.has-event { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
+.cal-dot { position: absolute; left: 50%; bottom: .4rem; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--accent); }
+.cal-modal { width: min(420px, calc(100vw - 2rem)); padding: 1.25rem; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); margin: auto; }
+.cal-modal::backdrop { background: rgb(0 0 0 / .5); }
+.cal-modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: .75rem; }
+.cal-modal-head h2 { margin: 0; font-size: 1.1rem; }
+.cal-event { padding: .75rem 0; border-top: 1px solid var(--line); }
+.cal-event h3 { margin: 0 0 .15rem; }
+@media (max-width: 520px) { .cal-grid { gap: 2px; } .cal-day { padding: .25rem; aspect-ratio: 1; font-size: .85rem; } .cal-head .btn { padding: .3rem .55rem; } }
+.cal-modal-head .modal-x { flex: none; width: 32px; height: 32px; padding: 0; font-size: 1.4rem; line-height: 1; background: none; color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer; }
+.cal-modal-head .modal-x:hover { background: var(--paper); }
